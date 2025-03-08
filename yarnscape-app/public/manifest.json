@@ -1,13 +1,7 @@
 {
     "short_name": "YarnScape",
     "name": "YarnScape",
-    "icons": [
-        {
-            "src": "/YarnScapeLogo.png",
-            "type": "image/png",
-            "sizes": "500x500"
-        }
-    ],
+    "icons": [],
     "id": "/",
     "start_url": ".",
     "background_color": "#3367D6",
