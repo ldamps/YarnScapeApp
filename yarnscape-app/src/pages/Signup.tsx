@@ -1,3 +1,4 @@
+// For the signup screen
 
 import { useState } from 'react';
 import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword } from 'firebase/auth';
@@ -15,22 +16,6 @@ const Signup = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
-
-    // Function to handle sign-up with Google
-    const signUpWithGoogle = async () => {
-        setAuthing(true);
-        
-        // Use Firebase to sign up with Google
-        signInWithPopup(auth, new GoogleAuthProvider())
-            .then(response => {
-                console.log(response.user.uid);
-                navigate('/');
-            })
-            .catch(error => {
-                console.log(error);
-                setAuthing(false);
-            });
-    };
 
     // Function to handle sign-up with email and password
     const signUpWithEmail = async () => {

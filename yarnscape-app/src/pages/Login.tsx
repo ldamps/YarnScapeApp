@@ -1,5 +1,7 @@
+// For the Login screen
+
 import { useState } from 'react';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import './register.css'
 
@@ -33,55 +35,44 @@ const Login = () => {
     }
 
     return (
-        <div className='w-full h-screen flex'>
-            {/* Left half of the screen - background styling */}
-            <div className='w-1/2 h-full flex flex-col bg-[#282c34] items-center justify-center'>
-            </div>
+        <div className='signin-container'>
+            <div className='login-section'>
 
-            {/* Right half of the screen - login form */}
-            <div className='w-1/2 h-full bg-[#1a1a1a] flex flex-col p-20 justify-center'>
-                <div className='w-full flex flex-col max-w-[450px] mx-auto'>
-                    {/* Header section with title and welcome message */}
-                    <div className='w-full flex flex-col mb-10 text-white'>
-                        <h3 className='text-4xl font-bold mb-2'>Welcome to YarnScape</h3>
-                        <p className='text-lg mb-4'>Please log in:</p>
-                    </div>
-
-                    {/* Input fields for email and password */}
-                    <div className='w-full flex flex-col mb-6'>
-                        <input
-                            type='email'
-                            placeholder='Email'
-                            className='w-full text-white py-2 mb-4 bg-transparent border-b border-gray-500 focus:outline-none focus:border-white'
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)} />
-                        <input
-                            type='password'
-                            placeholder='Password'
-                            className='w-full text-white py-2 mb-4 bg-transparent border-b border-gray-500 focus:outline-none focus:border-white'
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)} />
-                    </div>
-
-                    {/* Button to log in with email and password */}
-                    <div className='w-full flex flex-col mb-4'>
-                        <button
-                            className='w-full bg-transparent border border-white text-white my-2 font-semibold rounded-md p-4 text-center flex items-center justify-center cursor-pointer'
-                            onClick={signInWithEmail}
-                            disabled={authing}>
-                            Login
-                        </button>
-                    </div>
-
-                    {/* Display error message if there is one */}
-                    {error && <div className='text-red-500 mb-4'>{error}</div>}
-                    
+                {/* Header section */}
+                <div className='login-section-header'>
+                    <h1>Welcome to YarnScape</h1>
                 </div>
 
-                {/* Link to sign up page */}
-                <div className='w-full flex items-center justify-center mt-10'>
-                    <p className='text-sm font-normal text-gray-400'>Don't have an account? <span className='font-semibold text-white cursor-pointer underline'><a href='/signup'>Sign Up</a></span></p>
+                <div className='login-section-input'>
+                    <input
+                        type='email'
+                        placeholder='Email'
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)} />
+
+                    <input
+                        type='password'
+                        placeholder='Password'
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)} />
                 </div>
+
+                <div className='login-section-submitbtn'>
+                    <button
+                        onClick={signInWithEmail}
+                        disabled={authing}>
+                        Login
+                    </button>
+                </div>
+
+                {/* Display error message (if one) */}
+                {error && <div className='text-red-500 mb-4'>{error}</div>}
+
+                
+                <div className='yes-no-account'>
+                    <p>Don't have an account? <span><a href='/signup'>Sign Up</a></span></p>
+                </div>
+                
             </div>
         </div>
     );

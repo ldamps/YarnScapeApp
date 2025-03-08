@@ -5,6 +5,14 @@ import Homepage from './pages/Homepage'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import AuthRoute from './AuthRoute'
+import Userprofile from './pages/Userprofile'
+import Settings from './pages/Settings'
+import Privacypolicy from './pages/Privacypolicy'
+import Termscon from './pages/TermsCon'
+import Track from './pages/Track'
+import Design from './pages/design'
+import Library from './pages/library'
+import Inventory from './pages/inventory'
 import './index.css'
 
 import {
@@ -32,6 +40,14 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/" element={<AuthRoute><Homepage /></AuthRoute>} />
+        <Route path="/userprofile" element={<AuthRoute><Userprofile /></AuthRoute>} />
+        <Route path="/settings" element={<AuthRoute><Settings /></AuthRoute>} />
+        <Route path="/privacypolicy" element={<AuthRoute><Privacypolicy /></AuthRoute>} />
+        <Route path="/termsconditions" element={<AuthRoute><Termscon /></AuthRoute>} />
+        <Route path="/track" element={<AuthRoute><Track /></AuthRoute>} />
+        <Route path="/design" element={<AuthRoute><Design /></AuthRoute>} />
+        <Route path="/library" element={<AuthRoute><Library /></AuthRoute>} />
+        <Route path="/inventory" element={<AuthRoute><Inventory /></AuthRoute>} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
