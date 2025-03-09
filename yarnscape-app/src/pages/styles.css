@@ -1,0 +1,56 @@
+/* Styling for YarnScape screens*/
+
+/* Colour prefs (light/dark modes) */
+.light {
+    --c-text-primary: #191970;
+    --c-background: #b3d2f6;
+    --c-background-primary: #fff;
+    --c-background-secondary: #A9BECE;
+    --c-background-button: #8BAEc7;
+}
+
+
+.dark {
+    --c-text-primary: #eee;
+    --c-background: #5e5e5e;
+    --c-background-primary: #323339;
+    --c-background-secondary: #222128;
+    --c-background-button: #494a50;
+}
+
+/* Text size prefs (small/normal/large) */
+.small-text {
+    --text-size: 10px;
+    --text-headersize: 15px;
+    --text-header1size: 20px;
+}
+
+.normal-text {
+    --text-size: 16px;
+    --text-headersize: 21px;
+    --text-header1size: 26px;
+}
+
+.large-text {
+    --text-size: 22px;
+    --text-headersize: 27px;
+    --text-header1size: 32px;
+}
+
+
+/*---------------------------------------------------
+General styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    font-family: sans-serif;
+    background-color: var(--c-background);
+    color: var(--c-text-primary);
+    font-size: var(--text-size);
+}
+

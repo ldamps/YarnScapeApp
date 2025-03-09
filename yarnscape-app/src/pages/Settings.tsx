@@ -2,6 +2,9 @@
 import { useNavigate } from 'react-router-dom';
 import {FaEnvelope, FaArrowCircleLeft} from 'react-icons/fa';
 import { getAuth, signOut } from 'firebase/auth';
+import ColorPref from '../preferences/colourPref';
+import TextPref from '../preferences/textPref';
+import './styles.css'
 
 
 const Settings = () => {
@@ -41,12 +44,14 @@ const Settings = () => {
                 {/* Set Colour mode for app */}
                 <div className="colour-mode-preference">
                     <h3>Colour preference: </h3>
+                    <ColorPref />
 
                 </div>
 
                 {/* Set text sizes for app */}
                 <div className="text-size-preference">
                     <h3>Text-size preference: </h3>
+                    <TextPref />
                 </div>
 
                 {/* Enable/disable notifications */}

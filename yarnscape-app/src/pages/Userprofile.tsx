@@ -1,6 +1,7 @@
 // For the user profile screen
 import { useNavigate } from 'react-router-dom';
 import {FaCog, FaArrowCircleLeft} from 'react-icons/fa';
+import './styles.css'
 
 const Userprofile = () => {
 
