@@ -1,7 +1,7 @@
 // For the homepage screen
 import { useNavigate } from 'react-router-dom';
 import {FaUser} from 'react-icons/fa';
-import './home.css'
+import './styles.css'
 
 const Homepage = () => {
 
@@ -25,7 +25,7 @@ const Homepage = () => {
     return (
         <div className="homepage-container">
             <div className="homepage-header">
-                <h1>Hello</h1>
+                <h1>Hello!</h1>
                 <div className="profile-icon" onClick={navigateToProfile}>
                     <FaUser size={30} />
                 </div>

@@ -34,7 +34,7 @@ const Settings = () => {
     return (
         <div className="settings-container">
             <div className="settings-header">
-                <div className="profile-icon" onClick={navigateToProfile}>
+                <div className="back-icon" onClick={navigateToProfile}>
                     <FaArrowCircleLeft size={30} />
                 </div>
                 <h1>Settings and Preferences</h1>

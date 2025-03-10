@@ -1,1 +1,0 @@
-// Navigation bar for page footer: home, create, track, library, inventory, user profile

@@ -15,27 +15,30 @@ const Userprofile = () => {
 
     return (
         <div className="profile-container">
-            <div className="profile-header">
-                <div className="profile-icon" onClick={navigateToHome}>
+            <div className="go-back">
+                <div className="back-icon" onClick={navigateToHome}>
                     <FaArrowCircleLeft size={30} />
                 </div>
+            </div>
+
+            <div className="profile-header">
                 <h1>User Profile</h1>
-                <div className="profile-icon" onClick={navigateToSettings}>
+                <div className="setting-icon" onClick={navigateToSettings}>
                     <FaCog size={30} />
                 </div>
             </div>
 
             <div className="profile-body">
                 <div className="my-projects">
-                    <h2>My Projects</h2>
+                    <h2>My Projects: </h2>
                 </div>
 
                 <div className="my-patterns">
-                    <h2>My Patterns</h2>
+                    <h2>My Patterns: </h2>
                 </div>
 
                 <div className="saved-patterns">
-                    <h2>Saved patterns</h2>
+                    <h2>Saved patterns: </h2>
                 </div>
             </div>
 
