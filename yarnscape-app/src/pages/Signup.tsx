@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-import './register.css'
+import './styles.css'
 
 const Signup = () => {
     // Initialize Firebase authentication and navigation
@@ -42,62 +42,34 @@ const Signup = () => {
     };
 
     return (
-        <div className='w-full h-screen flex'>
-            {/* Left half of the screen - background styling */}
-            <div className='w-1/2 h-full flex flex-col bg-[#282c34] items-center justify-center'>
+        <div className='signin-container'>
+            <div className='login-section'>
+
+                {/*Header section */}
+                <div className='login-section-header'>
+                    <h3> Create an Account: </h3>
+                </div>
+
+                <div className='login-section-input'>
+                    <input type='email' placeholder='Email' value={email} onChange={(e) => setEmail(e.target.value)} />
+
+                    <input type='password' placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} />
+
+                    <input type='password' placeholder='Re-Enter Password' value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                </div>
+
+                <div className='login-section-submitbtn'>
+                    <button onClick={signUpWithEmail} disabled={authing}>Create
+                    </button>
+                </div>
+
+                 {/* Display error message (if one) */}
+                {error && <div className='signin-error-message'>{error}</div>}
+
             </div>
 
-            {/* Right half of the screen - signup form */}
-            <div className='w-1/2 h-full bg-[#1a1a1a] flex flex-col p-20 justify-center'>
-                <div className='w-full flex flex-col max-w-[450px] mx-auto'>
-                    {/* Header section with title and welcome message */}
-                    <div className='w-full flex flex-col mb-10 text-white'>
-                        <h3 className='text-4xl font-bold mb-2'>Create a YarnScape Account!</h3>
-                    </div>
-
-                    {/* Input fields for email, password, and confirm password */}
-                    <div className='w-full flex flex-col mb-6'>
-                        <input
-                            type='email'
-                            placeholder='Email'
-                            className='w-full text-white py-2 mb-4 bg-transparent border-b border-gray-500 focus:outline-none focus:border-white'
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
-                        <input
-                            type='password'
-                            placeholder='Password'
-                            className='w-full text-white py-2 mb-4 bg-transparent border-b border-gray-500 focus:outline-none focus:border-white'
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
-                        <input
-                            type='password'
-                            placeholder='Re-Enter Password'
-                            className='w-full text-white py-2 mb-4 bg-transparent border-b border-gray-500 focus:outline-none focus:border-white'
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                        />
-                    </div>
-
-                    {/* Display error message if there is one */}
-                    {error && <div className='text-red-500 mb-4'>{error}</div>}
-
-                    {/* Button to sign up with email and password */}
-                    <div className='w-full flex flex-col mb-4'>
-                        <button
-                            onClick={signUpWithEmail}
-                            disabled={authing}
-                            className='w-full bg-transparent border border-white text-white my-2 font-semibold rounded-md p-4 text-center flex items-center justify-center cursor-pointer'>
-                            Create
-                        </button>
-                    </div>
-                </div>
-
-                {/* Link to login page */}
-                <div className='w-full flex items-center justify-center mt-10'>
-                    <p className='text-sm font-normal text-gray-400'>Got an account? <span className='font-semibold text-white cursor-pointer underline'><a href='/login'>Log In</a></span></p>
-                </div>
+            <div className='yes-no-account'>
+                <p>Got an account? <span><a href='/login'>Log In</a></span></p>
             </div>
         </div>
     );

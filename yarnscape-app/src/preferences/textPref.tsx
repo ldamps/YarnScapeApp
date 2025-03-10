@@ -40,7 +40,6 @@ const TextPref = () => {
 
     return (
         <div style={{ padding: '20px' }}>
-            <h2>Select Text Size</h2>
             <label>
                 <input type="radio" value="small" checked={selectedSize === 'small'} onChange={handleSizeChange} />
                 Small
@@ -53,8 +52,6 @@ const TextPref = () => {
                 <input type="radio" value="large" checked={selectedSize === 'large'} onChange={handleSizeChange} />
                 Large
             </label>
-
-            <p>Selected Text Size: {selectedSize}</p>
         </div>
     );
 };

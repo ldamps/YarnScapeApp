@@ -1,9 +1,8 @@
 // For the Login screen
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-import './register.css'
+import './styles.css'
 
 const Login = () => {
     // Initialize Firebase authentication and navigation
@@ -40,7 +39,7 @@ const Login = () => {
 
                 {/* Header section */}
                 <div className='login-section-header'>
-                    <h1>Welcome to YarnScape</h1>
+                    <h3>Welcome to YarnScape: </h3>
                 </div>
 
                 <div className='login-section-input'>
@@ -66,13 +65,12 @@ const Login = () => {
                 </div>
 
                 {/* Display error message (if one) */}
-                {error && <div className='text-red-500 mb-4'>{error}</div>}
+                {error && <div className='signin-error-message'>{error}</div>}
+                
+            </div>
 
-                
-                <div className='yes-no-account'>
-                    <p>Don't have an account? <span><a href='/signup'>Sign Up</a></span></p>
-                </div>
-                
+            <div className='yes-no-account1'>
+                <p>Don't have an account? <span><a href='/signup'>Sign Up</a></span></p>
             </div>
         </div>
     );
