@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import './styles.css'
+import { validatePasswordStrength } from '../components/validatePassword';
 
 const Signup = () => {
     // Initialize Firebase authentication and navigation
@@ -16,14 +17,33 @@ const Signup = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
+    const [isChecked, setIsChecked] = useState(false);
+
+    const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setIsChecked(e.target.checked);
+    };
 
     // Function to handle sign-up with email and password
+    const validationError = validatePasswordStrength(password);
     const signUpWithEmail = async () => {
+
+        if (validationError) {
+            setError(validationError);
+            return;
+        } else if (password !== confirmPassword) {
+            setError('Passwords do not match');
+            return;
+        } else if (!isChecked) {
+            setError('Please agree to the terms and conditions in order to create your YarnScape account.');
+            return;
+        }
+
+        /*
         // Check if passwords match
         if (password !== confirmPassword) {
             setError('Passwords do not match');
             return;
-        }
+        }*/
 
         setAuthing(true);
         setError('');
@@ -56,6 +76,13 @@ const Signup = () => {
                     <input type='password' placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} />
 
                     <input type='password' placeholder='Re-Enter Password' value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+
+                    <div className="termsCheckbox">
+                        <label>
+                            <input type="checkbox" checked={isChecked} onChange={handleCheckboxChange} />
+                        I agree to the <a href='/termsconditions'>Terms and Conditions</a>
+                        </label>
+                    </div>
                 </div>
 
                 <div className='login-section-submitbtn'>
