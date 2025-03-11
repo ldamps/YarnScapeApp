@@ -1,0 +1,44 @@
+/* Styles for the bottom nav */
+/* Bottom navigation container */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #fff;
+    border-top: 1px solid #ddd;
+    padding: 10px 0;
+    box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+}
+
+/* Styling for each navigation item */
+.nav-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 5px;
+}
+
+/* Active item styling */
+.nav-item.active {
+    color: #4CAF50; /* Highlight the active tab with a green color */
+    transform: scale(1.2);
+}
+
+/* Icon size */
+.nav-item svg {
+    width: 24px;
+    height: 24px;
+  }
+  
+  /* Hover effect */
+  .nav-item:hover {
+    color: #555;
+    transform: scale(1.1);
+  }
