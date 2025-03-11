@@ -183,6 +183,44 @@ Login + Signup styles */
     font-size: 20px;
 }
 
+/* Style for the entire label */
+.termsCheckbox {
+    display: flex;
+    align-items: center;  /* Aligns items (checkbox and text) vertically in the center */
+    font-size: var(--text-size-input);
+    color: var(--c-text-primary);
+    margin-bottom: 20px;
+    padding-left: 5px;
+}
+
+/* Style for the checkbox input */
+.termsCheckbox input[type="checkbox"] {
+    margin-right: 5px;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+}
+
+/* Hover effect for the checkbox */
+.termsCheckbox input[type="checkbox"]:hover {
+    transform: scale(1.1);
+    transition: transform 0.2s;
+}
+
+/* Style for the link (Terms and Conditions) */
+.termsCheckbox .terms-link {
+    color: var(--c-text-primary);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+/* Change the link color when hovered */
+.termsCheckbox .terms-link:hover {
+    color: var(--c-text-primary);
+    text-decoration: underline;
+}
+
+
 /*---------------------------------------------------
 Homepage styles */
 .homepage-container {

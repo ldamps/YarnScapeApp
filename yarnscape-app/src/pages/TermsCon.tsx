@@ -4,14 +4,19 @@ import {FaArrowCircleLeft} from 'react-icons/fa';
 
 const Termscon = () => {
     const navigate = useNavigate();
-    const navigateToSettings = () => {
+    
+    /*const navigateToSettings = () => {
         navigate('/settings');
+    }*/
+
+    const handleGoBack = () => {
+        navigate(-1);
     }
 
     return (
         <div className="termscons-container">
             <div className="termscons-header">
-                <div className="profile-icon" onClick={navigateToSettings}>
+                <div className="profile-icon" onClick={handleGoBack}>
                     <FaArrowCircleLeft size={30} />
                 </div>
                 <h1>YarnScape's Terms and Conditions</h1>

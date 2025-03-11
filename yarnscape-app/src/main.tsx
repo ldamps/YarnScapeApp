@@ -44,7 +44,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <Route path="/userprofile" element={<AuthRoute><Userprofile /></AuthRoute>} />
         <Route path="/settings" element={<AuthRoute><Settings /></AuthRoute>} />
         <Route path="/privacypolicy" element={<AuthRoute><Privacypolicy /></AuthRoute>} />
-        <Route path="/termsconditions" element={<AuthRoute><Termscon /></AuthRoute>} />
+        <Route path="/termsconditions" element={<Termscon />} />
         <Route path="/track" element={<AuthRoute><Track /></AuthRoute>} />
         <Route path="/design" element={<AuthRoute><Design /></AuthRoute>} />
         <Route path="/library" element={<AuthRoute><Library /></AuthRoute>} />
