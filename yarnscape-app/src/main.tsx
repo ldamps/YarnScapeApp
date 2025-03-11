@@ -11,8 +11,8 @@ import Privacypolicy from './pages/Privacypolicy'
 import Termscon from './pages/TermsCon'
 import Track from './pages/Track'
 import Design from './pages/design'
-import Library from './pages/library'
-import Inventory from './pages/inventory'
+import Library from './pages/Library'
+import Inventory from './pages/Inventory'
 
 //import './index.css'
 
