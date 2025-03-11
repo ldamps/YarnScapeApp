@@ -28,7 +28,7 @@ const ColorPref = () => {
     }, [theme]);
 
     return (
-        <div>
+        <div className="colourPref-container">
             <label>
                 <input type="radio" value="light-mode" checked={theme === 'light'} onChange={toggleTheme} />
                 Light

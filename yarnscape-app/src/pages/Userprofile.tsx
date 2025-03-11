@@ -2,6 +2,8 @@
 import { useNavigate } from 'react-router-dom';
 import {FaCog, FaArrowCircleLeft} from 'react-icons/fa';
 import './styles.css'
+import React, { useState } from 'react';
+import BottomNav from '../components/bottomNav';
 
 const Userprofile = () => {
 
@@ -13,13 +15,20 @@ const Userprofile = () => {
         navigate('/');
     }
 
+    // For the bottom navbar
+    const [currentTab, setCurrentTab] = useState('userprofile');
+    
+    const handleTabChange = (tab: string) => {
+        setCurrentTab(tab); // Update the active tab
+    };
+
     return (
         <div className="profile-container">
-            <div className="go-back">
+            {/*<div className="go-back">
                 <div className="back-icon" onClick={navigateToHome}>
                     <FaArrowCircleLeft size={30} />
                 </div>
-            </div>
+            </div> */}
 
             <div className="profile-header">
                 <h1>User Profile</h1>
@@ -42,9 +51,7 @@ const Userprofile = () => {
                 </div>
             </div>
 
-            <div className="profile-footer">
-                {/* Icon navigation bar */}
-            </div>
+            <BottomNav currentTab={currentTab} onTabChange={handleTabChange} />
         </div>
     )
 }
