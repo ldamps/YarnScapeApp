@@ -1,6 +1,5 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-//import App from './App'
 import Homepage from './pages/Homepage'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
@@ -14,7 +13,6 @@ import Design from './pages/design'
 import Library from './pages/Library'
 import Inventory from './pages/Inventory'
 
-//import './index.css'
 
 import {
   BrowserRouter as Router, Routes, Route, Navigate
@@ -22,6 +20,7 @@ import {
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyANPim1rz1Q-1Kg6PdOO8QrsIAnNA_twqg",
@@ -33,6 +32,9 @@ const firebaseConfig = {
 };
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+// Initialise cloud firestore
+const db = getFirestore(app);
+
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
