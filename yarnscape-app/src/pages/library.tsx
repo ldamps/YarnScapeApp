@@ -18,6 +18,12 @@ const Library = () => {
             <div className="library-header">
                 <h1>Pattern Library</h1>
             </div>
+
+            <div className="library-filtering">
+                <div className="library-searchbar">
+                    <input type="text" placeholder="search..." />
+                </div>
+            </div>
             
             <BottomNav currentTab={currentTab} onTabChange={handleTabChange} />
         </div>
