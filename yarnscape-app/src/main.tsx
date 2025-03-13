@@ -1,6 +1,5 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-//import App from './App'
 import Homepage from './pages/Homepage'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
@@ -13,15 +12,17 @@ import Track from './pages/Track'
 import Design from './pages/design'
 import Library from './pages/Library'
 import Inventory from './pages/Inventory'
-
-//import './index.css'
-
+import Create from './pages/create'
+import Tracking from './pages/tracking'
 import {
   BrowserRouter as Router, Routes, Route, Navigate
 } from 'react-router-dom'
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+import { getAuth } from 'firebase/auth'
+import { getStorage } from 'firebase/storage'
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyANPim1rz1Q-1Kg6PdOO8QrsIAnNA_twqg",
@@ -33,6 +34,12 @@ const firebaseConfig = {
 };
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+// Initialise cloud firestore
+const db = getFirestore(app);
+const auth = getAuth(app);
+const storage = getStorage(app);
+
+
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -49,12 +56,15 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <Route path="/design" element={<AuthRoute><Design /></AuthRoute>} />
         <Route path="/library" element={<AuthRoute><Library /></AuthRoute>} />
         <Route path="/inventory" element={<AuthRoute><Inventory /></AuthRoute>} />
+        <Route path="/create" element={<AuthRoute><Create /></AuthRoute>} />
+        <Route path="/tracking" element={<AuthRoute><Tracking /></AuthRoute>} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
   </React.StrictMode>,
 )
 
+export {app, db, auth, storage};
 
 /*import React from 'react'
 import ReactDOM from 'react-dom/client'
