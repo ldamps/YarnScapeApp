@@ -97,6 +97,34 @@ const Create = () => {
         navigate('/design');
     }
 
+    const handlePublish = async () => {
+        try {
+            // Save the pattern to Firestore
+            const docRef = await addDoc(collection(db, 'my-patterns'), {
+                userId: user?.uid,
+                title,
+                sections,
+                tags,
+                materials,
+                type: patternType,
+            });
+    
+            // Reset form state
+            setTitle('');
+            setSections([{ title: '', instructions: '', photoUrl: '' }]);
+            setTags([]);
+            setMaterials([]);
+            setPatternType('crochet');
+    
+            // Redirect to the Publish page with the patternId from Firestore
+            navigate(`/publish/${docRef.id}`); // docRef.id is the unique patternId
+    
+        } catch (error) {
+            console.error('Error saving pattern:', error);
+            alert('There was an error while saving the pattern.');
+        }
+    };
+
     return (
         <div className="create-container">
             <form onSubmit={handleSubmit}>
@@ -154,7 +182,7 @@ const Create = () => {
                 <div className='createbuttons'>
                     <div className='createbuttons-row'>
                         <button type="submit">Save</button>
-                        <button>Publish</button>
+                        <button type="button" onClick={handlePublish}>Publish</button> {/* Onclick for Publish */}
                     </div>
                     <button onClick={handleCancel}>Cancel</button>
                 </div>

@@ -101,6 +101,7 @@ const Userprofile = () => {
                                 )}
                             </div>
                         )}
+                        <h3>Published Patterns: </h3>
                     </div>
                 </div>
 

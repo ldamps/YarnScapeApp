@@ -15,6 +15,7 @@ import Inventory from './pages/Inventory'
 import Create from './pages/create'
 import Tracking from './pages/tracking'
 import EditMyPattern from './pages/Edit'
+import Publish from './pages/Publish'
 import {
   BrowserRouter as Router, Routes, Route, Navigate
 } from 'react-router-dom'
@@ -60,6 +61,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <Route path="/create" element={<AuthRoute><Create /></AuthRoute>} />
         <Route path="/tracking" element={<AuthRoute><Tracking /></AuthRoute>} />
         <Route path="/edit/:patternId" element={<AuthRoute><EditMyPattern /></AuthRoute>} />
+        <Route path="/publish/:patternId" element={<AuthRoute><Publish /></AuthRoute>} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
