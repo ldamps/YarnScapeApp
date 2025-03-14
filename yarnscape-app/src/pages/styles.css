@@ -989,6 +989,11 @@ form {
     gap: 15px;
 }
 
+.createbuttons .editbuttons-row {
+    display: flex;
+    gap: 15px;
+}
+
 .createbuttons button {
     padding: 10px 20px;
     font-size: var(--text-size);
@@ -1000,6 +1005,10 @@ form {
 }
 
 .createbuttons-row button {
+    width: 50%;
+}
+
+.editbuttons-row button {
     width: 50%;
 }
 

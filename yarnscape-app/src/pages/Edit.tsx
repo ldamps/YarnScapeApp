@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
 interface Section {
@@ -115,6 +115,33 @@ const Edit = () => {
         navigate('/design');
     };
 
+    const handleDelete = async () => {
+        if (!patternId) {
+            console.error('Pattern ID is missing');
+            alert('Pattern ID is missing');
+            return;
+        }
+    
+        const userConfirmed = window.confirm('Are you sure you want to delete this pattern?');
+    
+        if (userConfirmed) {
+            try {
+                // Create a reference to the pattern document using the patternId
+                const patternRef = doc(db, 'my-patterns', patternId);
+                await deleteDoc(patternRef);
+                alert('Pattern deleted successfully!');
+                // Navigate to another page (e.g., back to the design page)
+                navigate('/design');
+            } catch (error) {
+                console.error('Error deleting pattern: ', error);
+                alert('Error deleting pattern');
+            }
+        } else {
+            // If the user cancels, do nothing
+            console.log('Pattern deletion cancelled');
+        }
+    };
+
     return (
         <div className="create-container">
             <form onSubmit={handleSubmit}>
@@ -201,7 +228,10 @@ const Edit = () => {
                         <button type="submit">Save</button>
                         <button>Publish</button>
                     </div>
-                    <button onClick={handleCancel}>Cancel</button>
+                    <div className="editbuttons-row">
+                        <button onClick={handleCancel}>Cancel</button>
+                        <button onClick={handleDelete}>Delete</button>
+                    </div>
                 </div>
             </form>
         </div>
