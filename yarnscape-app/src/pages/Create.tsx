@@ -14,6 +14,7 @@ interface Section {
 interface Pattern {
     id: string;
     title: string;
+    type: 'crochet' | 'knitting';
     sections: Section[];
     tags: string[];
     materials: string[];
@@ -29,6 +30,7 @@ const Create = () => {
     const [sections, setSections] = useState<Section[]>([{ title: '', instructions: '', photoUrl: '' }]);
     const [tags, setTags] = useState<string[]>([]);
     const [materials, setMaterials] = useState<string[]>([]);
+    const [patternType, setPatternType] = useState<'crochet' | 'knitting'>('crochet'); // default is crochet
 
     // Handle form input changes
     const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,6 +60,10 @@ const Create = () => {
         setSections(updatedSections);
     };
 
+    const handlePatternTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPatternType(e.target.value as 'crochet' | 'knitting');
+    };
+
     // Submit the form
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -66,7 +72,7 @@ const Create = () => {
             // Save to Firestore
             //await firestore.collection('patterns').add(patternData);
             await addDoc(collection(db, 'my-patterns'), {
-                userId: user?.uid, title: title, sections: sections, tags: tags, materials: materials
+                userId: user?.uid, title: title, sections: sections, tags: tags, materials: materials, type: patternType
             })
             alert('Pattern added successfully!');
             // Reset form
@@ -74,6 +80,9 @@ const Create = () => {
             setSections([{ title: '', instructions: '', photoUrl: '' }]);
             setTags([]);
             setMaterials([]);
+            setPatternType('crochet');
+            // go to the design page
+            navigate('/design');
         } catch (error) {
             console.error('Error adding pattern: ', error);
         }
@@ -94,23 +103,30 @@ const Create = () => {
             <form onSubmit={handleSubmit}>
 
                 <div className="create-headerSection">
-                    <div>
-                        <label>Title</label>
-                        <input type="text" value={title} onChange={handleTitleChange} required />
+                    <div className="create-patternTitle">
+                        <input placeholder='Pattern title...' type="text" value={title} onChange={handleTitleChange} required />
+                    </div>
+                    <div className="create-patternType">
+                        <label>
+                            <input type="radio" name="patternType" value="crochet" checked={patternType === 'crochet'} onChange={handlePatternTypeChange} />
+                            Crochet
+                        </label>
+                        <label>
+                            <input type="radio" name="patternType" value="knitting" checked={patternType === 'knitting'} onChange={handlePatternTypeChange} />
+                            Knitting
+                        </label>
                     </div>
                 </div>
 
                 <div className="create-body-sections">
-                    <label>Sections</label>
+                    <label className="sectionLabel">Sections</label>
                     {sections.map((section, index) => (
                     <div key={index}>
                         <div>
-                            <label>Section Title</label>
-                            <input type="text" value={section.title} onChange={(e) => handleSectionChange(index, 'title', e.target.value)} required />
+                            <input type="text" placeholder='section title...' value={section.title} onChange={(e) => handleSectionChange(index, 'title', e.target.value)} required />
                         </div>
                         <div>
-                            <label>Instructions</label>
-                            <textarea value={section.instructions} onChange={(e) => handleSectionChange(index, 'instructions', e.target.value)} required />
+                            <textarea placeholder='section instructions...' value={section.instructions} onChange={(e) => handleSectionChange(index, 'instructions', e.target.value)} required />
                             <button>Add photo</button>
                         </div>
                         {/*
@@ -126,19 +142,23 @@ const Create = () => {
 
                 <div className="create-optional">
                     <div className="create-tags">
-                        <label>Tags (comma separated)</label>
+                        <label>Tags (comma separated): </label>
                         <input type="text" value={tags.join(', ')} onChange={handleTagChange} />
                     </div>
 
                     <div className="create-materials">
-                        <label>Materials (comma separated)</label>
+                        <label>Materials (comma separated): </label>
                         <input type="text" value={materials.join(', ')} onChange={handleMaterialsChange} />
                     </div>
                 </div>
-
-                <button type="submit">Save</button>
-                <button>Publish</button>
-                <button onClick={handleCancel}>Cancel</button>
+                
+                <div className='createbuttons'>
+                    <div className='createbuttons-row'>
+                        <button type="submit">Save</button>
+                        <button>Publish</button>
+                    </div>
+                    <button onClick={handleCancel}>Cancel</button>
+                </div>
             </form>
         </div>
     );

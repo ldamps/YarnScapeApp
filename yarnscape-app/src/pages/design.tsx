@@ -63,7 +63,7 @@ const Design = () => {
             </div>
 
             <div className="design-body">
-                <button onClick={navigateToCreate}>+ Create new patern</button>
+                <button className="createPattern-button" onClick={navigateToCreate}>+ Create new pattern</button>
 
                 <h3>My patterns: </h3>
                 {loading ? (
@@ -76,7 +76,10 @@ const Design = () => {
                                     <li key={pattern.id}>
                                         <div className="myPattern-item">
                                             <span>{pattern.title}</span>
-                                            <button>Edit</button>
+                                            <div className="myPattern-columnbtns">
+                                                <button>Edit</button>
+                                                <button>Track</button>
+                                            </div>
                                         </div>
                                     </li>
                                 ))}
