@@ -307,9 +307,11 @@ User profile styles */
     justify-content: space-between;
     align-items: left;
     height: 80%;
-    margin-left: 0%;
-    margin-right: 0%;
+    margin-left: 1%;
+    margin-right: 1%;
     margin-top: 20%;
+    padding-left: 2%;
+    padding-right: 2%;
 }
 
 .go-back {
@@ -352,7 +354,7 @@ User profile styles */
 }
 
 .profile-body h2 {
-    font-size: var(--text-subheadersize);
+    font-size: var(--text-headersize);
     color: var(--c-text-primary);
     margin-bottom: 10px;
     text-decoration: underline;
@@ -361,6 +363,96 @@ User profile styles */
 .profile-body div {
     margin-bottom: 20px;
 }
+
+/* my patterns section: */
+.myPatterns-container {
+    padding: 20px;
+    padding-bottom: 5%;
+    background-color: var(--c-background-secondary);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+.myPatterns-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.myPatterns-column ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.myPatterns-item {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: var(--c-background-primary);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.myPatterns-item span {
+    font-size: var(--text-size);
+    font-weight: bold;
+    color: var(--c-text-primary);
+    text-align: left;
+}
+
+.myPatterns-columnbtns {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+}
+
+.myPatterns-columnbtns button {
+    padding: 10px 15px;
+    font-size: var(--text-size-input);
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.myPatterns-columnbtns button:first-child {
+    background-color: var(--c-background-button);
+    color: var(--text-size-input);
+    font-size: var(--text-size-input);
+}
+
+.myPatterns-columnbtns button:nth-child(2) {
+    background-color: var(--c-background-button);
+    color: var(--c-text-primary);
+    font-size: var(--text-size-input);
+}
+
+.myPatterns-columnbtns button:nth-child(3) {
+    background-color: var(--c-background-button);
+    color: var(--c-text-primary);
+    font-size: var(--text-size-input);
+}
+
+.myPatterns-container p {
+    text-align: center;
+    font-size: var(--text-size);
+    color: var(--c-text-primary);
+    font-weight: bold;
+}
+
+.myPatterns-container p:last-child {
+    font-size: var(--text-size);
+    color: var(--c-text-primary);
+    text-align: center;
+}
+
+
 
 /*---------------------------------------------------
 Settings styles */
