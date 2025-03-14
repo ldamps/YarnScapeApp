@@ -48,6 +48,11 @@ const Design = () => {
         }
     }, [db, user]);
 
+    const handleEdit = (patternId: string) => {
+        navigate(`/edit/${patternId}`); // Navigate to the edit page with the pattern ID
+    };
+
+
     // For the bottom navbar
     const [currentTab, setCurrentTab] = useState('design');
     
@@ -77,7 +82,7 @@ const Design = () => {
                                         <div className="myPattern-item">
                                             <span>{pattern.title}</span>
                                             <div className="myPattern-columnbtns">
-                                                <button>Edit</button>
+                                                <button onClick={() => handleEdit(pattern.id)}>Edit</button>
                                                 <button>Track</button>
                                             </div>
                                         </div>

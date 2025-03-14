@@ -788,7 +788,7 @@ Pattern Design styles */
 }
 
 /*---------------------------------------------------
-Create pattern styles */
+Create + Edit pattern styles */
 .create-container {
     display: flex;
     justify-content: center;
@@ -824,7 +824,8 @@ form {
 }
 
 .create-patternTitle input::placeholder {
-    color: var(--c-text-primary)
+    color: var(--c-text-primary);
+    opacity: 60%;
 }
 
 .create-patternTitle input:focus {
@@ -877,7 +878,8 @@ form {
 }
 
 .create-body-sections input::placeholder {
-    color: var(--c-text-primary)
+    color: var(--c-text-primary);
+    opacity: 60%;
 }
 
 .create-body-sections input:focus {
@@ -898,7 +900,8 @@ form {
 }
 
 .create-body-sections textarea::placeholder {
-    color: var(--c-text-primary)
+    color: var(--c-text-primary);
+    opacity: 60%;
 }
 
 .create-body-sections textarea:focus {

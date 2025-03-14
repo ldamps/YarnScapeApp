@@ -74,7 +74,6 @@ const Create = () => {
             await addDoc(collection(db, 'my-patterns'), {
                 userId: user?.uid, title: title, sections: sections, tags: tags, materials: materials, type: patternType
             })
-            alert('Pattern added successfully!');
             // Reset form
             setTitle('');
             setSections([{ title: '', instructions: '', photoUrl: '' }]);
