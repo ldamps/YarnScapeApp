@@ -5,7 +5,7 @@ import BottomNav from '../components/bottomNav';
 import './styles.css'
 import { getAuth } from 'firebase/auth';
 import { db } from '../main';
-import { getFirestore, collection, query, where, getDocs, addDoc, updateDoc, doc } from 'firebase/firestore';
+import { getFirestore, collection, query, where, getDocs, addDoc, updateDoc, doc, deleteDoc } from 'firebase/firestore';
 
 interface Pattern {
     id: string;
@@ -53,9 +53,32 @@ const Design = () => {
         navigate(`/edit/${patternId}`); // Navigate to the edit page with the pattern ID
     };
 
-    const handlePublish = (patternId: string) => {
-        
+    const handleUnpublish = async (patternId: string) => {
+        try {
+            // Step 1: Delete from 'published-patterns' collection
+            const publishedPatternRef = doc(db, 'published-patterns', patternId);
+            await deleteDoc(publishedPatternRef);
+    
+            // Step 2: Update 'published' field in 'my-patterns' collection to false
+            const myPatternRef = doc(db, 'my-patterns', patternId);
+            await updateDoc(myPatternRef, {
+                published: false,
+            });
+    
+            // Optionally: Update the UI immediately
+            setMyPatterns((prevPatterns) =>
+                prevPatterns.map((pattern) =>
+                pattern.id === patternId ? { ...pattern, published: false } : pattern
+                )
+            );
+    
+            alert('Pattern has been unpublished successfully!');
+        } catch (error) {
+            console.error('Error unpublishing pattern:', error);
+            alert('There was an error while unpublishing the pattern.');
+        }
     };
+    
 
 
     // For the bottom navbar
@@ -88,7 +111,7 @@ const Design = () => {
                                             <span>{pattern.title}</span>
                                             <div className="myPattern-columnbtns">
                                                 {pattern.published ? (
-                                                    <button onClick={() => handlePublish(pattern.id)}>Unpublish</button> // Show Track if published
+                                                    <button onClick={() => handleUnpublish(pattern.id)}>Unpublish</button> // Show Track if published
                                                 ) : (
                                                     <button onClick={() => handleEdit(pattern.id)}>Edit</button> // Show Edit if unpublished
                                                 )}
