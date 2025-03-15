@@ -1,57 +1,78 @@
 // For the user profile screen
 import { useNavigate } from 'react-router-dom';
-import {FaCog, FaArrowCircleLeft} from 'react-icons/fa';
-import './styles.css'
+import { FaCog, FaArrowCircleLeft } from 'react-icons/fa';
+import './styles.css';
 import React, { useEffect, useState } from 'react';
 import BottomNav from '../components/bottomNav';
 import { getAuth } from 'firebase/auth';
 import { db } from '../main';
-import { getFirestore, collection, query, where, getDocs, addDoc, updateDoc, doc } from 'firebase/firestore';
+import { getDocs, query, where, collection, doc, updateDoc } from 'firebase/firestore';
 
 interface Pattern {
     id: string;
     title: string;
+    published: boolean; // Added published status
 }
 
 const Userprofile = () => {
     const auth = getAuth();
     const user = auth.currentUser; // the current user
-    
+
     const [myPatterns, setMyPatterns] = useState<Pattern[]>([]);
     const [loading, setLoading] = useState(true);
 
     const navigate = useNavigate();
     const navigateToSettings = () => {
         navigate('/settings');
-    }
-    
-    // List the current user's patterns
+    };
+
+    // List the current user's patterns, including their published status
     useEffect(() => {
         if (user) {
             const fetchMyPatterns = async () => {
-                const q = query(collection(db, 'my-patterns'), where('userId', '==', user.uid));
-    
-                const querySnapshot = await getDocs(q);
-                const myPatternList: Pattern[] = [];
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    if (data.title) {
-                        myPatternList.push({ id: doc.id, title: data.title });
-                    }
-                });
-                setMyPatterns(myPatternList);
-                setLoading(false);
+            const q = query(collection(db, 'my-patterns'), where('userId', '==', user.uid));
+
+            const querySnapshot = await getDocs(q);
+            const myPatternList: Pattern[] = [];
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                if (data.title) {
+                    myPatternList.push({
+                        id: doc.id,
+                        title: data.title,
+                        published: data.published || false, // Ensure "published" is available
+                    });
+                }
+            });
+            setMyPatterns(myPatternList);
+            setLoading(false);
             };
-    
-            fetchMyPatterns();
+        fetchMyPatterns();
         }
     }, [db, user]);
 
     // For the bottom navbar
     const [currentTab, setCurrentTab] = useState('userprofile');
-    
+
     const handleTabChange = (tab: string) => {
         setCurrentTab(tab); // Update the active tab
+    };
+
+    // Handle Publish/Unpublish and Edit button actions
+    const handlePublishUnpublish = async (patternId: string, isPublished: boolean) => {
+        const patternRef = doc(db, 'my-patterns', patternId);
+        await updateDoc(patternRef, {
+            published: !isPublished, // Toggle published status
+        });
+        // Re-fetch patterns after update
+        const updatedPatterns = myPatterns.map((pattern) =>
+            pattern.id === patternId ? { ...pattern, published: !isPublished } : pattern
+        );
+        setMyPatterns(updatedPatterns);
+    };
+
+    const handleEdit = (patternId: string) => {
+        navigate(`/edit/${patternId}`);
     };
 
     return (
@@ -80,7 +101,7 @@ const Userprofile = () => {
                         {loading ? (
                             <p>Loading...</p>
                         ) : (
-                            <div className='myPatterns-column'>
+                            <div className="myPatterns-column">
                                 {myPatterns.length > 0 ? (
                                     <ul>
                                         {myPatterns.map((pattern) => (
@@ -88,7 +109,11 @@ const Userprofile = () => {
                                                 <div className="myPatterns-item">
                                                     <span>{pattern.title}</span>
                                                     <div className="myPatterns-columnbtns">
-                                                        <button>Edit</button>
+                                                        {pattern.published ? (
+                                                            <button onClick={() => handlePublishUnpublish(pattern.id, pattern.published)}>Unpublish</button>
+                                                        ) : (
+                                                            <button onClick={() => handleEdit(pattern.id)}>Edit</button>
+                                                        )}
                                                         <button>Track</button>
                                                         <button>Delete</button>
                                                     </div>
@@ -97,11 +122,11 @@ const Userprofile = () => {
                                         ))}
                                     </ul>
                                 ) : (
-                                    <p>no patterns</p>
+                                    <p>No patterns</p>
                                 )}
                             </div>
                         )}
-                        <h3>Published Patterns: </h3>
+                        <h3>Published Patterns:</h3>
                     </div>
                 </div>
 
@@ -112,7 +137,7 @@ const Userprofile = () => {
 
             <BottomNav currentTab={currentTab} onTabChange={handleTabChange} />
         </div>
-    )
-}
+    );
+};
 
-export default Userprofile
+export default Userprofile;

@@ -1027,6 +1027,150 @@ form {
     color: var(--c-text-primary);
 }
 
+/*---------------------------------------------------
+Publish pattern styles */
+.publish-container {
+    width: 80%;
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: var(--c-background-primary);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow:auto;
+}
+
+/* Header styling */
+.publish-container h1 {
+    font-size: var(--text-subheadingsize-1);
+    text-decoration: underline;
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--c-text-primary);
+    word-wrap: break-word;
+    max-width: 100%;
+    padding: 0 10px;
+}
+
+.publish-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.publish-header h2 {
+    font-size: var(--text-headersize);
+    color: var(--c-text-primary);
+    margin-bottom: 10px;
+}
+
+/* Subheading styling */
+.publish-subheading {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.publish-subheading p {
+    font-size: var(--text-size-input);
+    color: var(--c-text-primary);
+    opacity: 75%;
+    margin: 5px 0;
+}
+
+/* Author input section */
+.publish-author {
+    margin-bottom: 20px;
+}
+
+.publish-author label {
+    display: block;
+    font-size: var(--text-size-input);
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--c-text-primary);
+}
+
+.publish-author input {
+    width: 100%;
+    padding: 12px;
+    font-size: var(--text-size);
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    color: var(--c-text-primary);
+}
+
+.publish-author input:focus {
+    outline: none;
+    background-color: var(--c-background-inputfocus);
+}
+
+/* Cover image input section */
+.publish-image {
+    margin-bottom: 20px;
+}
+
+.publish-image label {
+    display: auto;
+    font-size: var(--text-size-input);
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--c-text-primary);
+}
+
+.publish-image input {
+    width: 100%;
+    padding: 12px;
+    font-size: var(--text-size-input);
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+/* Checkbox section */
+.publish-checkbox {
+    margin-bottom: 30px;
+}
+
+.publish-checkbox label {
+    font-size: var(--text-size);
+    color: var(--c-text-primary);
+}
+
+.publish-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.publish-button, .cancel-button {
+    padding: 10px 20px;
+    font-size: var(--text-size-input);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 48%;
+}
+
+.publish-button {
+    background-color: var(--c-background-button);
+    color: var(--c-text-primary);
+}
+
+.publish-button:hover {
+    background-color: var(--c-background-focus);
+}
+
+.cancel-button {
+    background-color: var(--c-background-button);
+    color: var(--c-text-primary);
+}
+
+.cancel-button:hover {
+    background-color: #e53935;
+}
+
+
+
 
 /*---------------------------------------------------
 Track project styles */

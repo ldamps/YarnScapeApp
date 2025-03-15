@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../main';
 import { getAuth } from 'firebase/auth';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getFirestore, doc, getDoc, addDoc, collection } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, addDoc, collection, updateDoc } from 'firebase/firestore';
 
 const Publish = () => {
     const auth = getAuth();
@@ -54,6 +54,11 @@ const Publish = () => {
             return;
         }
 
+        if (!patternId) {
+            console.error('Pattern ID is required.');
+            return;
+        }
+
         try {
             // Handle image upload if necessary (you can upload to Firebase Storage)
             
@@ -65,11 +70,24 @@ const Publish = () => {
                 datePublished: new Date(),
             });
 
+            // update the pattern to published = true
+            const patternRef = doc(db, 'my-patterns', patternId);
+            await updateDoc(patternRef, {
+                published: true, // Set published field to true
+            });
+
+
             alert('Pattern published successfully!');
             navigate('/patterns'); // Redirect to the page where users can see published patterns
         } catch (error) {
             console.error('Error publishing pattern:', error);
             alert('There was an error while publishing your pattern.');
+        }
+    };
+
+    const handleCancel = () => {
+        if (patternId) {
+            navigate(`/edit/${patternId}`); // Redirect to the Edit page with the current patternId
         }
     };
 
@@ -80,31 +98,35 @@ const Publish = () => {
     return (
         <div className="publish-container">
             <h1>Confirm Your Pattern</h1>
-            <div>
+            <div className='publish-header'>
                 <h2>{pattern.title}</h2>
+            </div>
+            <div className="publish-subheading">
                 <p>Type: {pattern.type}</p>
                 <p>Sections: {pattern.sections.length}</p>
             </div>
 
-            <div>
+            <div className='publish-author'>
                 <label>Author Name</label>
                 <input type="text" value={authorName} onChange={handleAuthorChange} required />
             </div>
 
-            <div>
+            <div className="publish-image">
                 <label>Cover Image</label>
                 <input type="file" accept="image/*" onChange={handleImageChange} />
             </div>
 
-            <div>
+            <div className="publish-checkbox">
                 <label>
                     <input type="checkbox" checked={agreed} onChange={handleAgreeChange} />
                     I agree that this pattern is not copyrighted.
                 </label>
             </div>
 
-            <button onClick={handlePublish}>Publish</button>
-            <button>Cancel</button>
+            <div className="publish-buttons">
+                <button onClick={handlePublish} className="publish-button">Publish</button>
+                <button onClick={handleCancel} className="cancel-button">Cancel</button>
+            </div>
         </div>
     )
 

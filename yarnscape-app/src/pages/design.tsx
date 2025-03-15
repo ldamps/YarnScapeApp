@@ -10,6 +10,7 @@ import { getFirestore, collection, query, where, getDocs, addDoc, updateDoc, doc
 interface Pattern {
     id: string;
     title: string;
+    published: boolean;
 }
 
 
@@ -37,7 +38,7 @@ const Design = () => {
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
                     if (data.title) {
-                        myPatternList.push({ id: doc.id, title: data.title });
+                        myPatternList.push({ id: doc.id, title: data.title, published: data.published });
                     }
                 });
                 setMyPatterns(myPatternList);
@@ -50,6 +51,10 @@ const Design = () => {
 
     const handleEdit = (patternId: string) => {
         navigate(`/edit/${patternId}`); // Navigate to the edit page with the pattern ID
+    };
+
+    const handlePublish = (patternId: string) => {
+        
     };
 
 
@@ -82,7 +87,12 @@ const Design = () => {
                                         <div className="myPattern-item">
                                             <span>{pattern.title}</span>
                                             <div className="myPattern-columnbtns">
-                                                <button onClick={() => handleEdit(pattern.id)}>Edit</button>
+                                                {pattern.published ? (
+                                                    <button onClick={() => handlePublish(pattern.id)}>Unpublish</button> // Show Track if published
+                                                ) : (
+                                                    <button onClick={() => handleEdit(pattern.id)}>Edit</button> // Show Edit if unpublished
+                                                )}
+
                                                 <button>Track</button>
                                             </div>
                                         </div>

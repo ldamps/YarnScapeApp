@@ -18,6 +18,7 @@ interface Pattern {
     sections: Section[];
     tags: string[];
     materials: string[];
+    published: boolean;
 };
 
 const Create = () => {
@@ -72,7 +73,7 @@ const Create = () => {
             // Save to Firestore
             //await firestore.collection('patterns').add(patternData);
             await addDoc(collection(db, 'my-patterns'), {
-                userId: user?.uid, title: title, sections: sections, tags: tags, materials: materials, type: patternType
+                userId: user?.uid, title: title, sections: sections, tags: tags, materials: materials, type: patternType, published: false
             })
             // Reset form
             setTitle('');
@@ -99,6 +100,16 @@ const Create = () => {
 
     const handlePublish = async () => {
         try {
+            if (!title.trim()) {
+                alert('Please enter a title');
+                return;
+            }
+            for (const section of sections) {
+                if (!section.title.trim() || !section.instructions.trim()) {
+                    alert('Please make sure all section titles and instructions are filled out.');
+                    return; // Prevent the function from proceeding if any section is incomplete
+                }
+            }
             // Save the pattern to Firestore
             const docRef = await addDoc(collection(db, 'my-patterns'), {
                 userId: user?.uid,
@@ -107,6 +118,7 @@ const Create = () => {
                 tags,
                 materials,
                 type: patternType,
+                published: false,
             });
     
             // Reset form state

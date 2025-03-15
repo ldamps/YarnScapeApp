@@ -1,3 +1,4 @@
+// Screen to edit a pattern
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getFirestore, doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
@@ -142,6 +143,31 @@ const Edit = () => {
         }
     };
 
+    const handlePublish = async (e: React.MouseEvent) => {
+        e.preventDefault();  // Prevent the form from submitting
+
+        if (!patternId) return;
+
+        try {
+            // Optionally, update the pattern's "published" status
+            const docRef = doc(db, 'my-patterns', patternId);
+            await updateDoc(docRef, {
+                title: title,
+                sections: sections,
+                tags: tags,
+                materials: materials,
+                type: patternType,
+                pubished: false // Mark the pattern as published
+            });
+
+            // Navigate to the publish page
+            navigate(`/publish/${patternId}`);
+        } catch (error) {
+            console.error('Error publishing pattern: ', error);
+            alert('Error publishing pattern');
+        }
+    };
+
     return (
         <div className="create-container">
             <form onSubmit={handleSubmit}>
@@ -226,8 +252,9 @@ const Edit = () => {
                 <div className="createbuttons">
                     <div className="createbuttons-row">
                         <button type="submit">Save</button>
-                        <button>Publish</button>
+                        <button onClick={handlePublish}>Publish</button>
                     </div>
+                    
                     <div className="editbuttons-row">
                         <button onClick={handleCancel}>Cancel</button>
                         <button onClick={handleDelete}>Delete</button>
