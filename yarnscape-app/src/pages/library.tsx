@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import BottomNav from '../components/bottomNav';
 import { db } from '../main';
 import { getAuth } from 'firebase/auth';
-import { collection, query, getDocs, where } from 'firebase/firestore';
+import { collection, query, getDocs, where, doc, setDoc } from 'firebase/firestore';
 import './styles.css'
 
 interface Pattern {
@@ -24,10 +24,6 @@ const Library = () => {
 
     // For the bottom navbar
     const [currentTab, setCurrentTab] = useState('library');
-    
-    const handleTabChange = (tab: string) => {
-        setCurrentTab(tab); // Update the active tab
-    };
 
     // Function to handle the search filter
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,26 +32,29 @@ const Library = () => {
         filterPatterns(query);
     };
 
-    // Function to filter the patterns based on the search query
+    // Function to filter the patterns based on the search query (both title and author)
     const filterPatterns = (query: string) => {
         const filtered = publishedPatterns.filter((pattern) =>
-            pattern.title.toLowerCase().includes(query)
+            pattern.title.toLowerCase().includes(query) || pattern.author.toLowerCase().includes(query)
         );
         setFilteredPatterns(filtered);
     };
 
+    const handleTabChange = (tab: string) => {
+        setCurrentTab(tab); // Update the active tab
+    };
 
     // Fetch published patterns from Firestore
     useEffect(() => {
         const fetchPublishedPatterns = async () => {
             if (user) {
                 // Query for all published patterns
-                const q = query(collection(db, 'published-patterns'));
+                const q = query(collection(db, 'published-patterns'), where('published', '==', true));
                 const querySnapshot = await getDocs(q);
                 const patternsList: Pattern[] = [];
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
-                    if (data.title && data.userId !== user.uid) { // Exclude the current user's patterns
+                    if (data.title && data.author !== user.displayName) { // Exclude the current user's patterns
                         patternsList.push({ id: doc.id, title: data.title, author: data.author, published: data.published });
                     }
                 });
@@ -68,6 +67,39 @@ const Library = () => {
         fetchPublishedPatterns();
     }, [user]);
 
+    // Handle Track Button
+    const handleTrack = async (patternId: string) => {
+        if (!user) {
+            alert("You need to be logged in to track patterns.");
+            return;
+        }
+
+        try {
+            const trackedPatternRef = doc(db, 'users', user.uid, 'tracked-patterns', patternId);
+            await setDoc(trackedPatternRef, { patternId });
+            alert("Pattern tracked successfully!");
+        } catch (error) {
+            console.error("Error tracking pattern:", error);
+            alert("There was an error tracking the pattern.");
+        }
+    };
+
+    // Handle Save Button
+    const handleSave = async (patternId: string) => {
+        if (!user) {
+            alert("You need to be logged in to save patterns.");
+            return;
+        }
+
+        try {
+            const savedPatternRef = doc(db, 'users', user.uid, 'saved-patterns', patternId);
+            await setDoc(savedPatternRef, { patternId });
+            alert("Pattern saved successfully!");
+        } catch (error) {
+            console.error("Error saving pattern:", error);
+            alert("There was an error saving the pattern.");
+        }
+    };
 
     return (
         <div className="library-container">
@@ -79,7 +111,7 @@ const Library = () => {
                 <div className="library-searchbar">
                     <input
                         type="text"
-                        placeholder="Search..."
+                        placeholder="Search by title or author..."
                         value={searchQuery}
                         onChange={handleSearchChange}
                     />
@@ -98,6 +130,10 @@ const Library = () => {
                                         <div className="pattern-item">
                                             <span>{pattern.title}</span>
                                             <span> by {pattern.author}</span>
+                                            <div className="pattern-actions">
+                                                <button onClick={() => handleTrack(pattern.id)}>Track</button>
+                                                <button onClick={() => handleSave(pattern.id)}>Save</button>
+                                            </div>
                                         </div>
                                     </li>
                                 ))}
@@ -113,5 +149,6 @@ const Library = () => {
         </div>
     );
 };
+
 
 export default Library

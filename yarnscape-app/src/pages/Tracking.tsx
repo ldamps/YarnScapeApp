@@ -1,15 +1,22 @@
 // For the Tracking of a project screen
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { db } from '../main';
+import { doc, getDoc, updateDoc, setDoc } from 'firebase/firestore';
 import './styles.css'
+
+const formatDate = (date: Date) => {
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+};
 
 
 const Tracking = () => {
+    
 
 
 
     return (
         <div className="tracking-container">
-            
+            <h1>hi</h1>
         </div>
     )
 }

@@ -60,7 +60,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <Route path="/library" element={<AuthRoute><Library /></AuthRoute>} />
         <Route path="/inventory" element={<AuthRoute><Inventory /></AuthRoute>} />
         <Route path="/create" element={<AuthRoute><Create /></AuthRoute>} />
-        <Route path="/tracking" element={<AuthRoute><Tracking /></AuthRoute>} />
+        <Route path="/tracking/:patternId" element={<AuthRoute><Tracking /></AuthRoute>} />
         <Route path="/edit/:patternId" element={<AuthRoute><EditMyPattern /></AuthRoute>} />
         <Route path="/publish/:patternId" element={<AuthRoute><Publish /></AuthRoute>} />
         <Route path="*" element={<Navigate to="/" />} />

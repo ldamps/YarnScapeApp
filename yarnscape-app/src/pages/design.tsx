@@ -53,6 +53,10 @@ const Design = () => {
         navigate(`/edit/${patternId}`); // Navigate to the edit page with the pattern ID
     };
 
+    const handleTrack = (patternId: string) => {
+        navigate(`/tracking/${patternId}`); // Navigate to the edit page with the pattern ID
+    };
+
     const handleUnpublish = async (patternId: string) => {
         try {
             // Step 1: Delete from 'published-patterns' collection
@@ -116,7 +120,7 @@ const Design = () => {
                                                     <button onClick={() => handleEdit(pattern.id)}>Edit</button> // Show Edit if unpublished
                                                 )}
 
-                                                <button>Track</button>
+                                                <button onClick={() => handleTrack(pattern.id)}>Track</button>
                                             </div>
                                         </div>
                                     </li>
