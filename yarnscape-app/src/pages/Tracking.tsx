@@ -4,11 +4,6 @@ import { db } from '../main';
 import { doc, getDoc, updateDoc, setDoc } from 'firebase/firestore';
 import './styles.css'
 
-const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-};
-
-
 const Tracking = () => {
     
 
@@ -19,6 +14,6 @@ const Tracking = () => {
             <h1>hi</h1>
         </div>
     )
-}
+};
 
 export default Tracking

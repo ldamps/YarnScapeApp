@@ -5,7 +5,7 @@ import BottomNav from '../components/bottomNav';
 import './styles.css'
 import { getAuth } from 'firebase/auth';
 import { db } from '../main';
-import { getFirestore, collection, query, where, getDocs, addDoc, updateDoc, doc, deleteDoc } from 'firebase/firestore';
+import { getFirestore, collection, query, where, getDocs, addDoc, updateDoc, doc, deleteDoc, getDoc } from 'firebase/firestore';
 
 interface Pattern {
     id: string;
@@ -53,8 +53,57 @@ const Design = () => {
         navigate(`/edit/${patternId}`); // Navigate to the edit page with the pattern ID
     };
 
-    const handleTrack = (patternId: string) => {
-        navigate(`/tracking/${patternId}`); // Navigate to the edit page with the pattern ID
+    const handleTrack = async (patternId: string) => {
+        if (!user) {
+            // If there's no user, show an error message or redirect to login
+            alert('Please log in to track patterns.');
+            return;
+        }
+    
+        try {
+            // Step 1: Check if the user is already tracking the pattern
+            const q = query(collection(db, 'tracking-projects'), where('userId', '==', user.uid), where('patternId', '==', patternId));
+            const querySnapshot = await getDocs(q);
+    
+            if (!querySnapshot.empty) {
+                // If the user is already tracking this pattern, get the existing tracking project ID
+                const existingTrackingProject = querySnapshot.docs[0];
+                const trackingProjectId = existingTrackingProject.id;
+    
+                // Redirect the user to the track page with the tracking project ID
+                navigate(`/tracking/${trackingProjectId}`);
+            } else {
+                // Step 2: If not tracking, add a new tracking project for this pattern
+                const patternRef = doc(db, 'my-patterns', patternId);
+                const patternDoc = await getDoc(patternRef);
+                if (!patternDoc.exists()) {
+                    alert('Pattern not found.');
+                    return;
+                }
+    
+                const patternData = patternDoc.data();
+    
+                // Step 3: Add the pattern to the tracking-projects collection
+                const newTrackingProject = {
+                    userId: user.uid,
+                    patternId: patternId,
+                    title: patternData?.title,
+                    createdAt: new Date(),
+                    goal: '',
+                    timeSpent: 0,
+                    lastEdited: new Date(),
+                    completed: false,
+                };
+    
+                const trackingProjectRef = await addDoc(collection(db, 'tracking-projects'), newTrackingProject);
+    
+                // Step 4: Redirect the user to the track page with the new tracking project ID
+                navigate(`/tracking/${trackingProjectRef.id}`);
+            }
+        } catch (error) {
+            console.error('Error handling track:', error);
+            alert('There was an error tracking the pattern.');
+        }
     };
 
     const handleUnpublish = async (patternId: string) => {

@@ -11,7 +11,14 @@ import { getDocs, query, where, collection, doc, updateDoc } from 'firebase/fire
 interface Pattern {
     id: string;
     title: string;
-    published: boolean; // Added published status
+    published: boolean;
+}
+
+interface TrackingProject {
+    id: string;
+    title: string;
+    completed: boolean;
+    lastEdited: string;
 }
 
 const Userprofile = () => {
@@ -20,6 +27,8 @@ const Userprofile = () => {
 
     const [myPatterns, setMyPatterns] = useState<Pattern[]>([]);
     const [loading, setLoading] = useState(true);
+    const [trackingProjects, setTrackingProjects] = useState<TrackingProject[]>([]);
+    const [loadingTracking, setLoadingTracking] = useState(true);
 
     const navigate = useNavigate();
     const navigateToSettings = () => {
@@ -51,6 +60,29 @@ const Userprofile = () => {
         }
     }, [db, user]);
 
+    // Fetch the user's tracking projects
+    useEffect(() => {
+        if (user) {
+            const fetchTrackingProjects = async () => {
+                const q = query(collection(db, 'tracking-projects'), where('userId', '==', user.uid));
+                const querySnapshot = await getDocs(q);
+                const trackingProjectList: TrackingProject[] = [];
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    trackingProjectList.push({
+                        id: doc.id,
+                        title: data.title,
+                        completed: data.completed || false,
+                        lastEdited: data.lastEdited?.toDate().toISOString() || '', // Store last edited date
+                    });
+                });
+                setTrackingProjects(trackingProjectList);
+                setLoadingTracking(false);
+            };
+            fetchTrackingProjects();
+        }
+    }, [user, db]);
+
     // For the bottom navbar
     const [currentTab, setCurrentTab] = useState('userprofile');
 
@@ -75,13 +107,38 @@ const Userprofile = () => {
         navigate(`/edit/${patternId}`);
     };
 
+    // Handle Mark as Complete and Continue Tracking
+    const handleMarkComplete = async (projectId: string) => {
+        try {
+            const projectRef = doc(db, 'tracking-projects', projectId);
+            await updateDoc(projectRef, {
+                completed: true,
+                lastEdited: new Date(),
+            });
+
+            // Update the UI immediately
+            setTrackingProjects((prevProjects) =>
+                prevProjects.map((project) =>
+                    project.id === projectId ? { ...project, completed: true, lastEdited: new Date().toISOString() } : project
+                )
+            );
+            alert('Project marked as completed!');
+        } catch (error) {
+            console.error('Error marking project as completed:', error);
+            alert('There was an error marking the project as completed.');
+        }
+    };
+
+    const handleContinueTracking = (projectId: string) => {
+        navigate(`/tracking/${projectId}`); // Redirect to the track page
+    };
+
+    const handleViewProject = (projectId: string) => {
+        navigate(`/tracking/${projectId}`); // Redirect to the track page to view the project
+    };
+
     return (
         <div className="profile-container">
-            {/*<div className="go-back">
-                <div className="back-icon" onClick={navigateToHome}>
-                    <FaArrowCircleLeft size={30} />
-                </div>
-            </div> */}
 
             <div className="profile-header">
                 <h1>User Profile</h1>
@@ -93,6 +150,40 @@ const Userprofile = () => {
             <div className="profile-body">
                 <div className="my-projects">
                     <h2>My Projects: </h2>
+                    <div className="trackingProjects-container">
+                        {loadingTracking ? (
+                            <p>Loading...</p>
+                        ) : (
+                            <div className="trackingProjects-column">
+                                {trackingProjects.length > 0 ? (
+                                    <ul>
+                                        {trackingProjects.map((project) => (
+                                            <li key={project.id}>
+                                                <div className="trackingProject-item">
+                                                    <span>{project.title}</span>
+                                                    <div className="trackingProject-date">
+                                                        Last Edited: {new Date(project.lastEdited).toLocaleString()}
+                                                    </div>
+                                                    <div className="trackingProject-actions">
+                                                        {project.completed ? (
+                                                            <button onClick={() => handleViewProject(project.id)}>View Project</button>
+                                                        ) : (
+                                                            <>
+                                                                <button onClick={() => handleContinueTracking(project.id)}>Continue Tracking</button>
+                                                                <button onClick={() => handleMarkComplete(project.id)}>Mark as Complete</button>
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p>No tracking projects found.</p>
+                                )}
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 <div className="my-patterns">
