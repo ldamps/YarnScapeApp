@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BottomNav from '../components/bottomNav';
-import './styles.css'
+import './styles.css';
 import { getAuth } from 'firebase/auth';
 import { db } from '../main';
 import { getFirestore, collection, query, where, getDocs, addDoc, updateDoc, doc, deleteDoc, getDoc } from 'firebase/firestore';
@@ -13,26 +13,23 @@ interface Pattern {
     published: boolean;
 }
 
-
 const Design = () => {
     const auth = getAuth();
     const user = auth.currentUser; // the current user
-
     const [myPatterns, setMyPatterns] = useState<Pattern[]>([]);
     const [loading, setLoading] = useState(true);
+    const [completedPatterns, setCompletedPatterns] = useState<string[]>([]); // Keep track of completed patterns
 
-    // To create a new pattern
     const navigate = useNavigate();
     const navigateToCreate = () => {
         navigate('/create');
-    }
+    };
 
     // List of the current user's patterns - fetch the user's patterns from firestore
     useEffect(() => {
         if (user) {
             const fetchMyPatterns = async () => {
                 const q = query(collection(db, 'my-patterns'), where('userId', '==', user.uid));
-
                 const querySnapshot = await getDocs(q);
                 const myPatternList: Pattern[] = [];
                 querySnapshot.forEach((doc) => {
@@ -43,11 +40,28 @@ const Design = () => {
                 });
                 setMyPatterns(myPatternList);
                 setLoading(false);
+                // After fetching the user's patterns, check for completed tracking projects
+                fetchCompletedPatterns();
             };
 
             fetchMyPatterns();
         }
     }, [db, user]);
+
+    // Fetch the completed tracking patterns for the current user
+    const fetchCompletedPatterns = async () => {
+        if (!user) return;
+
+        const q = query(collection(db, 'tracking-projects'), where('userId', '==', user.uid), where('completed', '==', true));
+        const querySnapshot = await getDocs(q);
+        const completedPatternIds: string[] = [];
+
+        querySnapshot.forEach((doc) => {
+            completedPatternIds.push(doc.data().patternId);
+        });
+
+        setCompletedPatterns(completedPatternIds); // Store completed pattern IDs
+    };
 
     const handleEdit = (patternId: string) => {
         navigate(`/edit/${patternId}`); // Navigate to the edit page with the pattern ID
@@ -55,7 +69,6 @@ const Design = () => {
 
     const handleTrack = async (patternId: string) => {
         if (!user) {
-            // If there's no user, show an error message or redirect to login
             alert('Please log in to track patterns.');
             return;
         }
@@ -66,11 +79,17 @@ const Design = () => {
             const querySnapshot = await getDocs(q);
     
             if (!querySnapshot.empty) {
-                // If the user is already tracking this pattern, get the existing tracking project ID
+                // If the pattern is already being tracked, check if it's completed
                 const existingTrackingProject = querySnapshot.docs[0];
-                const trackingProjectId = existingTrackingProject.id;
+                const trackingData = existingTrackingProject.data();
     
-                // Redirect the user to the track page with the tracking project ID
+                if (trackingData.completed) {
+                    alert('You have already completed tracking this pattern.');
+                    return; // Don't allow tracking if it's completed
+                }
+    
+                // If the pattern is being tracked but not completed, redirect to the tracking page
+                const trackingProjectId = existingTrackingProject.id;
                 navigate(`/tracking/${trackingProjectId}`);
             } else {
                 // Step 2: If not tracking, add a new tracking project for this pattern
@@ -88,6 +107,11 @@ const Design = () => {
                     userId: user.uid,
                     patternId: patternId,
                     title: patternData?.title,
+                    type: patternData?.type,
+                    sections: patternData?.sections,
+                    tags: patternData?.tags,
+                    materials: patternData?.materials,
+                    skillLevel: patternData?.skillLevel,
                     createdAt: new Date(),
                     goal: '',
                     timeSpent: 0,
@@ -96,8 +120,7 @@ const Design = () => {
                 };
     
                 const trackingProjectRef = await addDoc(collection(db, 'tracking-projects'), newTrackingProject);
-    
-                // Step 4: Redirect the user to the track page with the new tracking project ID
+                console.log('Tracking Project ID:', trackingProjectRef.id); // Add this line for debugging
                 navigate(`/tracking/${trackingProjectRef.id}`);
             }
         } catch (error) {
@@ -108,39 +131,30 @@ const Design = () => {
 
     const handleUnpublish = async (patternId: string) => {
         try {
-            // Step 1: Delete from 'published-patterns' collection
             const publishedPatternRef = doc(db, 'published-patterns', patternId);
             await deleteDoc(publishedPatternRef);
-    
-            // Step 2: Update 'published' field in 'my-patterns' collection to false
+
             const myPatternRef = doc(db, 'my-patterns', patternId);
             await updateDoc(myPatternRef, {
                 published: false,
             });
-    
-            // Optionally: Update the UI immediately
+
             setMyPatterns((prevPatterns) =>
                 prevPatterns.map((pattern) =>
-                pattern.id === patternId ? { ...pattern, published: false } : pattern
+                    pattern.id === patternId ? { ...pattern, published: false } : pattern
                 )
             );
-    
-            alert('Pattern has been unpublished successfully!');
         } catch (error) {
             console.error('Error unpublishing pattern:', error);
             alert('There was an error while unpublishing the pattern.');
         }
     };
-    
 
-
-    // For the bottom navbar
     const [currentTab, setCurrentTab] = useState('design');
-    
+
     const handleTabChange = (tab: string) => {
         setCurrentTab(tab); // Update the active tab
     };
-
 
     return (
         <div className="design-container">
@@ -164,19 +178,24 @@ const Design = () => {
                                             <span>{pattern.title}</span>
                                             <div className="myPattern-columnbtns">
                                                 {pattern.published ? (
-                                                    <button onClick={() => handleUnpublish(pattern.id)}>Unpublish</button> // Show Track if published
+                                                    <button onClick={() => handleUnpublish(pattern.id)}>Unpublish</button>
                                                 ) : (
-                                                    <button onClick={() => handleEdit(pattern.id)}>Edit</button> // Show Edit if unpublished
+                                                    <button onClick={() => handleEdit(pattern.id)}>Edit</button>
                                                 )}
 
-                                                <button onClick={() => handleTrack(pattern.id)}>Track</button>
+                                                {/* Conditionally render Track button */}
+                                                {!completedPatterns.includes(pattern.id) && (
+                                                    <button onClick={() => handleTrack(pattern.id)}>
+                                                        Track
+                                                    </button>
+                                                )}
                                             </div>
                                         </div>
                                     </li>
                                 ))}
                             </ul>
                         ) : (
-                            <p>no patterns</p>
+                            <p>No patterns</p>
                         )}
                     </div>
                 )}

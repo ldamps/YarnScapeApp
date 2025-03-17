@@ -17,6 +17,8 @@ interface Pattern {
     sections: Section[];
     tags: string[];
     materials: string[];
+    published: boolean;
+    skillLevel: 'beginner' | 'intermediate' | 'advanced';
 };
 
 const Edit = () => {
@@ -31,6 +33,7 @@ const Edit = () => {
     const [tags, setTags] = useState<string[]>([]);
     const [materials, setMaterials] = useState<string[]>([]);
     const [patternType, setPatternType] = useState<'crochet' | 'knitting'>('crochet'); // default is crochet
+    const [skillLevel, setSkillLevel] = useState<'beginner' | 'intermediate' | 'advanced'>('beginner'); // default is beginner
 
     // Fetch the pattern data when the component mounts
     useEffect(() => {
@@ -48,6 +51,7 @@ const Edit = () => {
                 setTags(patternData.tags);
                 setMaterials(patternData.materials);
                 setPatternType(patternData.type);
+                setSkillLevel(patternData.skillLevel);
             } else {
                 console.error('Pattern not found');
             }
@@ -87,6 +91,10 @@ const Edit = () => {
     const handlePatternTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPatternType(e.target.value as 'crochet' | 'knitting');
     };
+    
+    const handleSkillLevelChange = (level: 'beginner' | 'intermediate' | 'advanced') => {
+        setSkillLevel(level);
+    };
 
     // Submit the form
     const handleSubmit = async (e: React.FormEvent) => {
@@ -101,7 +109,9 @@ const Edit = () => {
                 sections: sections,
                 tags: tags,
                 materials: materials,
-                type: patternType
+                type: patternType,
+                published: false,
+                skillLevel: skillLevel
             });
 
             // Navigate back to the design page or wherever
@@ -149,15 +159,17 @@ const Edit = () => {
         if (!patternId) return;
 
         try {
-            // Optionally, update the pattern's "published" status
+            // update the pattern's "published" status
             const docRef = doc(db, 'my-patterns', patternId);
             await updateDoc(docRef, {
+                patternID: patternId,
                 title: title,
                 sections: sections,
                 tags: tags,
                 materials: materials,
                 type: patternType,
-                pubished: false // Mark the pattern as published
+                pubished: false, // Mark the pattern as published
+                skillLevel: skillLevel,
             });
 
             // Navigate to the publish page
@@ -172,6 +184,7 @@ const Edit = () => {
         <div className="create-container">
             <form onSubmit={handleSubmit}>
                 <div className="create-headerSection">
+                    
                     <div className="create-patternTitle">
                         <input
                             placeholder="Pattern title..."
@@ -203,6 +216,39 @@ const Edit = () => {
                             Knitting
                         </label>
                     </div>
+                </div>
+
+                <div className="create-skillLevel">
+                    <label>
+                        <input
+                            type="radio"
+                            name="skillLevel"
+                            value="beginner"
+                            checked={skillLevel === 'beginner'}
+                            onChange={() => handleSkillLevelChange('beginner')}
+                        />
+                        Beginner
+                    </label>
+                    <label>
+                        <input
+                            type="radio"
+                            name="skillLevel"
+                            value="intermediate"
+                            checked={skillLevel === 'intermediate'}
+                            onChange={() => handleSkillLevelChange('intermediate')}
+                        />
+                        Intermediate
+                    </label>
+                    <label>
+                        <input
+                            type="radio"
+                            name="skillLevel"
+                            value="advanced"
+                            checked={skillLevel === 'advanced'}
+                            onChange={() => handleSkillLevelChange('advanced')}
+                        />
+                        Advanced
+                    </label>
                 </div>
 
                 <div className="create-body-sections">

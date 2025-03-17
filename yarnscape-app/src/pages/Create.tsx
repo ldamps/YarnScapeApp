@@ -19,6 +19,7 @@ interface Pattern {
     tags: string[];
     materials: string[];
     published: boolean;
+    skillLevel: 'beginner' | 'intermediate' | 'advanced';
 };
 
 const Create = () => {
@@ -32,6 +33,7 @@ const Create = () => {
     const [tags, setTags] = useState<string[]>([]);
     const [materials, setMaterials] = useState<string[]>([]);
     const [patternType, setPatternType] = useState<'crochet' | 'knitting'>('crochet'); // default is crochet
+    const [skillLevel, setSkillLevel] = useState<'beginner' | 'intermediate' | 'advanced'>('beginner'); // default is beginner
 
     // Handle form input changes
     const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,6 +67,11 @@ const Create = () => {
         setPatternType(e.target.value as 'crochet' | 'knitting');
     };
 
+    // Skill level change handler
+    const handleSkillLevelChange = (level: 'beginner' | 'intermediate' | 'advanced') => {
+        setSkillLevel(level);
+    };
+
     // Submit the form
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -73,7 +80,7 @@ const Create = () => {
             // Save to Firestore
             //await firestore.collection('patterns').add(patternData);
             await addDoc(collection(db, 'my-patterns'), {
-                userId: user?.uid, title: title, sections: sections, tags: tags, materials: materials, type: patternType, published: false
+                userId: user?.uid, title: title, sections: sections, tags: tags, materials: materials, type: patternType, published: false, skillLevel: skillLevel,
             })
             // Reset form
             setTitle('');
@@ -81,6 +88,8 @@ const Create = () => {
             setTags([]);
             setMaterials([]);
             setPatternType('crochet');
+            setSkillLevel('beginner');
+
             // go to the design page
             navigate('/design');
         } catch (error) {
@@ -119,6 +128,7 @@ const Create = () => {
                 materials,
                 type: patternType,
                 published: false,
+                skillLevel: skillLevel,
             });
     
             // Reset form state
@@ -127,6 +137,7 @@ const Create = () => {
             setTags([]);
             setMaterials([]);
             setPatternType('crochet');
+            setSkillLevel('beginner');
     
             // Redirect to the Publish page with the patternId from Firestore
             navigate(`/publish/${docRef.id}`); // docRef.id is the unique patternId
@@ -145,6 +156,7 @@ const Create = () => {
                     <div className="create-patternTitle">
                         <input placeholder='Pattern title...' type="text" value={title} onChange={handleTitleChange} required />
                     </div>
+                    
                     <div className="create-patternType">
                         <label>
                             <input type="radio" name="patternType" value="crochet" checked={patternType === 'crochet'} onChange={handlePatternTypeChange} />
@@ -155,6 +167,41 @@ const Create = () => {
                             Knitting
                         </label>
                     </div>
+                    
+                    <div className="create-skillLevel">
+                    <div>
+                        <label>
+                            <input
+                                type="radio"
+                                name="skillLevel"
+                                value="beginner"
+                                checked={skillLevel === 'beginner'}
+                                onChange={() => handleSkillLevelChange('beginner')}
+                            />
+                            Beginner
+                        </label>
+                        <label>
+                            <input
+                                type="radio"
+                                name="skillLevel"
+                                value="intermediate"
+                                checked={skillLevel === 'intermediate'}
+                                onChange={() => handleSkillLevelChange('intermediate')}
+                            />
+                            Intermediate
+                        </label>
+                        <label>
+                            <input
+                                type="radio"
+                                name="skillLevel"
+                                value="advanced"
+                                checked={skillLevel === 'advanced'}
+                                onChange={() => handleSkillLevelChange('advanced')}
+                            />
+                            Advanced
+                        </label>
+                    </div>
+                </div>
                 </div>
 
                 <div className="create-body-sections">

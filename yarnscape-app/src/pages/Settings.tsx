@@ -1,4 +1,5 @@
 // For the setting screen
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {FaEnvelope, FaArrowCircleLeft} from 'react-icons/fa';
 import { getAuth, signOut } from 'firebase/auth';
@@ -19,6 +20,17 @@ const Settings = () => {
     const navigateToProfile = () => {
         navigate('/userprofile')
     }
+
+    const [userEmail, setUserEmail] = useState<string | null>(null);
+
+    useEffect(() => {
+        const auth = getAuth();
+        const user = auth.currentUser;
+    
+        if (user) {
+          setUserEmail(user.email); // Get the email if the user is signed in
+        }
+    }, []);
 
 
     // Function to sign the current user out
@@ -57,6 +69,16 @@ const Settings = () => {
                 {/* Enable/disable notifications */}
                 <div className="notification-preference">
                     <h3>Notifications: </h3>
+                </div>
+
+                {/* Personal details */}
+                <div className="personal-details">
+                    <h3>Account details: </h3>
+                    {userEmail ? (
+                        <p>Email: {userEmail}</p>
+                    ) : (
+                        <p>error...</p>
+                    )}
                 </div>
 
             </div>

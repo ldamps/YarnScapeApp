@@ -161,9 +161,7 @@ const Userprofile = () => {
                                             <li key={project.id}>
                                                 <div className="trackingProject-item">
                                                     <span>{project.title}</span>
-                                                    <div className="trackingProject-date">
-                                                        Last Edited: {new Date(project.lastEdited).toLocaleString()}
-                                                    </div>
+                                                    
                                                     <div className="trackingProject-actions">
                                                         {project.completed ? (
                                                             <button onClick={() => handleViewProject(project.id)}>View Project</button>
@@ -195,22 +193,39 @@ const Userprofile = () => {
                             <div className="myPatterns-column">
                                 {myPatterns.length > 0 ? (
                                     <ul>
-                                        {myPatterns.map((pattern) => (
-                                            <li key={pattern.id}>
-                                                <div className="myPatterns-item">
-                                                    <span>{pattern.title}</span>
-                                                    <div className="myPatterns-columnbtns">
-                                                        {pattern.published ? (
-                                                            <button onClick={() => handlePublishUnpublish(pattern.id, pattern.published)}>Unpublish</button>
-                                                        ) : (
-                                                            <button onClick={() => handleEdit(pattern.id)}>Edit</button>
-                                                        )}
-                                                        <button>Track</button>
-                                                        <button>Delete</button>
+                                        {myPatterns.map((pattern) => {
+                                            // Check if this pattern has been tracked (but not completed)
+                                            const isTracked = trackingProjects.some(
+                                                (project) => project.title === pattern.title && !project.completed
+                                            );
+
+                                            // Check if this pattern is tracked and completed
+                                            const isPatternCompleted = trackingProjects.some(
+                                                (project) => project.title === pattern.title && project.completed
+                                            );
+
+                                            return (
+                                                <li key={pattern.id}>
+                                                    <div className="myPatterns-item">
+                                                        <span>{pattern.title}</span>
+                                                        <div className="myPatterns-columnbtns">
+                                                            {pattern.published ? (
+                                                                <button onClick={() => handlePublishUnpublish(pattern.id, pattern.published)}>Unpublish</button>
+                                                            ) : (
+                                                                <button onClick={() => handleEdit(pattern.id)}>Edit</button>
+                                                            )}
+
+                                                            {/* Conditionally render Track button */}
+                                                            {(!isTracked && !isPatternCompleted) && (
+                                                                <button>Track</button> // Show "Track" if not tracked or not completed
+                                                            )}
+                                        
+                                                            <button>Delete</button>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </li>
-                                        ))}
+                                                </li>
+                                            );
+                                        })}
                                     </ul>
                                 ) : (
                                     <p>No patterns</p>
