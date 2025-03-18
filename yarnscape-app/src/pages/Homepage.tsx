@@ -1,7 +1,8 @@
 // For the homepage screen
 import { useNavigate } from 'react-router-dom';
-import {FaUser} from 'react-icons/fa';
 import './styles.css'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {faUser} from '@fortawesome/free-solid-svg-icons';
 
 const Homepage = () => {
 
@@ -27,7 +28,7 @@ const Homepage = () => {
             <div className="homepage-header">
                 <h1>Hello!</h1>
                 <div className="profile-icon" onClick={navigateToProfile}>
-                    <FaUser size={30} />
+                    <FontAwesomeIcon icon={faUser} size="2x" />
                 </div>
             </div>
 
