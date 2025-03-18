@@ -50,7 +50,7 @@ const Tracking = () => {
         if (!projectId) {
             console.error("No projectId provided");
             alert("Project ID is missing. Please check the URL.");
-            navigate("/"); // Navigate to home or a safe page
+            navigate("/track");
             return;
         }
 
@@ -70,23 +70,43 @@ const Tracking = () => {
                 } else {
                     console.error('Pattern not found');
                     alert("Project not found.");
-                    navigate("/"); // Navigate to home or a safe page
+                    navigate("/track");
                 }
             } catch (error) {
                 console.error('Error fetching project:', error);
                 alert('Error fetching project.');
-                navigate("/"); // Navigate to home or a safe page
+                navigate("/track");
             } finally {
                 setLoading(false);
             }
         };
 
         fetchProject();
-    }, [projectId, db, navigate]);
+    }, [projectId, db, navigate, user]);
 
     // Function to update the project data
     const handleUpdateProject = async () => {
-        
+        if (!projectId || !projectData) {
+            return;
+        }
+    
+        const updatedProjectData = {
+            ...projectData,
+            goal: goal,
+            timeSpent: timeSpent,
+            completed: completed,
+            lastRowIndex: selectedRowIndex !== null ? selectedRowIndex : projectData.lastRowIndex, // Ensure a valid value for lastRowIndex
+            lastEdited: new Date(),
+        };
+    
+        try {
+            const docRef = doc(db, 'tracking-projects', projectId);
+            await updateDoc(docRef, updatedProjectData);
+            alert('Project progress saved successfully!');
+        } catch (error) {
+            console.error('Error saving project progress:', error);
+            alert('Error saving project progress.');
+        }
     };
 
     // Handle row click to select or deselect a row

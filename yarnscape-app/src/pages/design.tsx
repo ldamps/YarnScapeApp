@@ -117,6 +117,7 @@ const Design = () => {
                     timeSpent: 0,
                     lastEdited: new Date(),
                     completed: false,
+                    lastRowIndex: 0,
                 };
     
                 const trackingProjectRef = await addDoc(collection(db, 'tracking-projects'), newTrackingProject);

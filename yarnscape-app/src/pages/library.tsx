@@ -69,36 +69,12 @@ const Library = () => {
 
     // Handle Track Button
     const handleTrack = async (patternId: string) => {
-        if (!user) {
-            alert("You need to be logged in to track patterns.");
-            return;
-        }
-
-        try {
-            const trackedPatternRef = doc(db, 'users', user.uid, 'tracked-patterns', patternId);
-            await setDoc(trackedPatternRef, { patternId });
-            alert("Pattern tracked successfully!");
-        } catch (error) {
-            console.error("Error tracking pattern:", error);
-            alert("There was an error tracking the pattern.");
-        }
+        
     };
 
     // Handle Save Button
     const handleSave = async (patternId: string) => {
-        if (!user) {
-            alert("You need to be logged in to save patterns.");
-            return;
-        }
-
-        try {
-            const savedPatternRef = doc(db, 'users', user.uid, 'saved-patterns', patternId);
-            await setDoc(savedPatternRef, { patternId });
-            alert("Pattern saved successfully!");
-        } catch (error) {
-            console.error("Error saving pattern:", error);
-            alert("There was an error saving the pattern.");
-        }
+        
     };
 
     return (

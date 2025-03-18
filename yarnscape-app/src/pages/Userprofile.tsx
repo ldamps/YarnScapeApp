@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import BottomNav from '../components/bottomNav';
 import { getAuth } from 'firebase/auth';
 import { db } from '../main';
-import { getDocs, query, where, collection, doc, updateDoc } from 'firebase/firestore';
+import { getDocs, query, where, collection, doc, updateDoc, addDoc, getDoc, deleteDoc } from 'firebase/firestore';
 
 interface Pattern {
     id: string;
@@ -107,6 +107,69 @@ const Userprofile = () => {
         navigate(`/edit/${patternId}`);
     };
 
+    const handleTrack = async (patternId: string) => {
+            if (!user) {
+                alert('Please log in to track patterns.');
+                return;
+            }
+        
+            try {
+                // Step 1: Check if the user is already tracking the pattern
+                const q = query(collection(db, 'tracking-projects'), where('userId', '==', user.uid), where('patternId', '==', patternId));
+                const querySnapshot = await getDocs(q);
+        
+                if (!querySnapshot.empty) {
+                    // If the pattern is already being tracked, check if it's completed
+                    const existingTrackingProject = querySnapshot.docs[0];
+                    const trackingData = existingTrackingProject.data();
+        
+                    if (trackingData.completed) {
+                        alert('You have already completed tracking this pattern.');
+                        return; // Don't allow tracking if it's completed
+                    }
+        
+                    // If the pattern is being tracked but not completed, redirect to the tracking page
+                    const trackingProjectId = existingTrackingProject.id;
+                    navigate(`/tracking/${trackingProjectId}`);
+                } else {
+                    // Step 2: If not tracking, add a new tracking project for this pattern
+                    const patternRef = doc(db, 'my-patterns', patternId);
+                    const patternDoc = await getDoc(patternRef);
+                    if (!patternDoc.exists()) {
+                        alert('Pattern not found.');
+                        return;
+                    }
+        
+                    const patternData = patternDoc.data();
+        
+                    // Step 3: Add the pattern to the tracking-projects collection
+                    const newTrackingProject = {
+                        userId: user.uid,
+                        patternId: patternId,
+                        title: patternData?.title,
+                        type: patternData?.type,
+                        sections: patternData?.sections,
+                        tags: patternData?.tags,
+                        materials: patternData?.materials,
+                        skillLevel: patternData?.skillLevel,
+                        createdAt: new Date(),
+                        goal: '',
+                        timeSpent: 0,
+                        lastEdited: new Date(),
+                        completed: false,
+                        lastRowIndex: 0,
+                    };
+        
+                    const trackingProjectRef = await addDoc(collection(db, 'tracking-projects'), newTrackingProject);
+                    console.log('Tracking Project ID:', trackingProjectRef.id); // Add this line for debugging
+                    navigate(`/tracking/${trackingProjectRef.id}`);
+                }
+            } catch (error) {
+                console.error('Error handling track:', error);
+                alert('There was an error tracking the pattern.');
+            }
+        };
+
     // Handle Mark as Complete and Continue Tracking
     const handleMarkComplete = async (projectId: string) => {
         try {
@@ -135,6 +198,34 @@ const Userprofile = () => {
 
     const handleViewProject = (projectId: string) => {
         navigate(`/tracking/${projectId}`); // Redirect to the track page to view the project
+    };
+
+    const handleDelete = async (patternId: string) => {
+        if (!user) {
+            alert('Please log in to delete patterns.');
+            return;
+        }
+
+        try {
+            // Delete the pattern from 'my-patterns' collection
+            const patternRef = doc(db, 'my-patterns', patternId);
+            await deleteDoc(patternRef);
+
+            // Delete any related tracking projects from 'tracking-projects' collection
+            const q = query(collection(db, 'tracking-projects'), where('patternId', '==', patternId), where('userId', '==', user.uid));
+            const querySnapshot = await getDocs(q);
+            querySnapshot.forEach(async (doc) => {
+                await deleteDoc(doc.ref);
+            });
+
+            // Remove the pattern from the state
+            const updatedPatterns = myPatterns.filter((pattern) => pattern.id !== patternId);
+            setMyPatterns(updatedPatterns);
+            alert('Pattern deleted successfully.');
+        } catch (error) {
+            console.error('Error deleting pattern:', error);
+            alert('There was an error deleting the pattern.');
+        }
     };
 
     return (
@@ -194,12 +285,7 @@ const Userprofile = () => {
                                 {myPatterns.length > 0 ? (
                                     <ul>
                                         {myPatterns.map((pattern) => {
-                                            // Check if this pattern has been tracked (but not completed)
-                                            const isTracked = trackingProjects.some(
-                                                (project) => project.title === pattern.title && !project.completed
-                                            );
-
-                                            // Check if this pattern is tracked and completed
+                                            // Check if this pattern has been tracked (and completed)
                                             const isPatternCompleted = trackingProjects.some(
                                                 (project) => project.title === pattern.title && project.completed
                                             );
@@ -215,12 +301,12 @@ const Userprofile = () => {
                                                                 <button onClick={() => handleEdit(pattern.id)}>Edit</button>
                                                             )}
 
-                                                            {/* Conditionally render Track button */}
-                                                            {(!isTracked && !isPatternCompleted) && (
-                                                                <button>Track</button> // Show "Track" if not tracked or not completed
+                                                            {/* Only show Track button if the pattern is not completed */}
+                                                            {!isPatternCompleted && (
+                                                                <button onClick={() => handleTrack(pattern.id)}>Track</button>
                                                             )}
-                                        
-                                                            <button>Delete</button>
+
+                                                            <button onClick={() => handleDelete(pattern.id)}>Delete</button>
                                                         </div>
                                                     </div>
                                                 </li>
