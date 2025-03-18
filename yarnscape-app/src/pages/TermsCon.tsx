@@ -1,6 +1,7 @@
 // For the Terms and Conditions screen
 import { useNavigate } from "react-router-dom";
-import {FaArrowCircleLeft} from 'react-icons/fa';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowAltCircleLeft } from '@fortawesome/free-solid-svg-icons';
 
 const Termscon = () => {
     const navigate = useNavigate();
@@ -17,7 +18,7 @@ const Termscon = () => {
         <div className="termscons-container">
             <div className="termscons-header">
                 <div className="profile-icon" onClick={handleGoBack}>
-                    <FaArrowCircleLeft size={30} />
+                    <FontAwesomeIcon icon={faArrowAltCircleLeft} size="2x" />
                 </div>
                 <h1>YarnScape's Terms and Conditions</h1>
                 <h2>Effective Date: 01/03/2025</h2>

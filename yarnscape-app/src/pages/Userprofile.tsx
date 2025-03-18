@@ -1,12 +1,13 @@
 // For the user profile screen
 import { useNavigate } from 'react-router-dom';
-import { FaCog, FaArrowCircleLeft } from 'react-icons/fa';
+import { useState, useEffect } from 'react';
 import './styles.css';
-import React, { useEffect, useState } from 'react';
 import BottomNav from '../components/bottomNav';
 import { getAuth } from 'firebase/auth';
 import { db } from '../main';
 import { getDocs, query, where, collection, doc, updateDoc, addDoc, getDoc, deleteDoc } from 'firebase/firestore';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCog } from '@fortawesome/free-solid-svg-icons';
 
 interface Pattern {
     id: string;
@@ -234,7 +235,7 @@ const Userprofile = () => {
             <div className="profile-header">
                 <h1>User Profile</h1>
                 <div className="setting-icon" onClick={navigateToSettings}>
-                    <FaCog size={30} />
+                    <FontAwesomeIcon icon={faCog} size="2x" />
                 </div>
             </div>
 

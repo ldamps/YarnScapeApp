@@ -1,7 +1,9 @@
 // For the setting screen
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {FaEnvelope, FaArrowCircleLeft} from 'react-icons/fa';
+//import {FaEnvelope, FaArrowCircleLeft} from 'react-icons/fa';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEnvelope, faArrowAltCircleLeft } from '@fortawesome/free-solid-svg-icons';
 import { getAuth, signOut } from 'firebase/auth';
 import ColorPref from '../preferences/colourPref';
 import TextPref from '../preferences/textPref';
@@ -47,7 +49,7 @@ const Settings = () => {
         <div className="settings-container">
             <div className="settings-header">
                 <div className="back-icon" onClick={navigateToProfile}>
-                    <FaArrowCircleLeft size={30} />
+                    <FontAwesomeIcon icon={faArrowAltCircleLeft} size="2x" />
                 </div>
                 <h1>Settings and Preferences</h1>
             </div>
@@ -97,7 +99,7 @@ const Settings = () => {
             </div>
 
             <div className="settings-footer">
-                <FaEnvelope style={{ marginRight: '8px' }} />
+                <FontAwesomeIcon icon={faEnvelope} size="2x" />
                 <span>enquiries@yarnscape.com</span>
             </div>
         </div>
