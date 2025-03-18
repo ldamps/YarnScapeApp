@@ -32,11 +32,8 @@ const Inventory = () => {
     const [yarnInventory, setYarnInventory] = useState<Yarn[]>([]);
     const [loading, setLoading] = useState(true);
 
-
     const user = auth.currentUser; // the current signed in user
     
-
-
     // fetch the user's yarn inventory from firestore
     useEffect(() => {
         if (user) {

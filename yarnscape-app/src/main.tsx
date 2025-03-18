@@ -14,6 +14,9 @@ import Library from './pages/Library'
 import Inventory from './pages/Inventory'
 import Create from './pages/create'
 import Tracking from './pages/tracking'
+import EditMyPattern from './pages/Edit'
+import Publish from './pages/Publish'
+
 import {
   BrowserRouter as Router, Routes, Route, Navigate
 } from 'react-router-dom'
@@ -57,7 +60,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <Route path="/library" element={<AuthRoute><Library /></AuthRoute>} />
         <Route path="/inventory" element={<AuthRoute><Inventory /></AuthRoute>} />
         <Route path="/create" element={<AuthRoute><Create /></AuthRoute>} />
-        <Route path="/tracking" element={<AuthRoute><Tracking /></AuthRoute>} />
+        <Route path="/tracking/:projectId" element={<AuthRoute><Tracking /></AuthRoute>} />
+        <Route path="/edit/:patternId" element={<AuthRoute><EditMyPattern /></AuthRoute>} />
+        <Route path="/publish/:patternId" element={<AuthRoute><Publish /></AuthRoute>} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
@@ -66,13 +71,3 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 
 export {app, db, auth, storage};
 
-/*import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'
-import './index.css'
-
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)*/
