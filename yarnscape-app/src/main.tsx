@@ -43,7 +43,6 @@ const auth = getAuth(app);
 const storage = getStorage(app);
 
 
-
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <Router>
