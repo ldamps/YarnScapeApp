@@ -4,6 +4,7 @@ import { db } from '../main';
 import { doc, getDoc, updateDoc, setDoc, collection, getFirestore } from 'firebase/firestore';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
+import axios from 'axios';
 import './styles.css'
 
 interface Section {
@@ -27,6 +28,7 @@ interface TrackingProject {
     lastEdited: any;
     completed: boolean;
     lastRowIndex: number;
+    patternPhotos?: string[];
 }
 
 const Tracking = () => {
@@ -44,6 +46,7 @@ const Tracking = () => {
     const [selectedSectionIndex, setSelectedSectionIndex] = useState<number | null>(null);
     const [collapsedSections, setCollapsedSections] = useState<boolean[]>([]);
     const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null);
+    const [patternPhotos, setPatternPhotos] = useState<string[]>([]); // For pattern-wide photos
 
     // Fetch project data on mount
     useEffect(() => {
@@ -84,6 +87,43 @@ const Tracking = () => {
         fetchProject();
     }, [projectId, db, navigate, user]);
 
+    // Handle image upload for the whole pattern
+    const handleImageUploadForPattern = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (!files) return;
+
+        const formData = new FormData();
+        formData.append('upload_preset', 'yarnscape-images'); // Replace with your Cloudinary preset
+
+        try {
+            const newPatternPhotos = [...patternPhotos]; // Copy the existing pattern photos
+
+            // Loop through files and upload each one to Cloudinary
+            for (let i = 0; i < files.length; i++) {
+                formData.append('file', files[i]);
+
+                const response = await axios.post('https://api.cloudinary.com/v1_1/dm2icxasv/image/upload', formData);
+                const imageUrl = response.data.secure_url;
+
+                // Add the new image URL to the pattern's photoUrls array
+                newPatternPhotos.push(imageUrl);
+            }
+
+            // Update the patternPhotos state
+            setPatternPhotos(newPatternPhotos);
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            alert('Failed to upload image.');
+        }
+    };
+
+    // Handle photo removal for the whole pattern
+    const handleRemovePatternPhoto = (photoIndex: number) => {
+        const updatedPatternPhotos = patternPhotos.filter((_, i) => i !== photoIndex);
+        setPatternPhotos(updatedPatternPhotos);
+    };
+
+
     // Function to update the project data
     const handleUpdateProject = async () => {
         if (!projectId || !projectData) {
@@ -96,7 +136,7 @@ const Tracking = () => {
             timeSpent: timeSpent,
             completed: completed,
             lastRowIndex: selectedRowIndex !== null ? selectedRowIndex : projectData.lastRowIndex, // Ensure a valid value for lastRowIndex
-            lastEdited: new Date(),
+            lastEdited: new Date(), patternPhotos: patternPhotos,
         };
     
         try {
@@ -120,6 +160,8 @@ const Tracking = () => {
             prevState.map((collapsed, i) => (i === index ? !collapsed : collapsed))
         );
     };
+
+    
 
     // Loading state and display of the project data
     if (loading) {
@@ -197,6 +239,28 @@ const Tracking = () => {
                 );
             })}
 
+            {/* Pattern-wide Photos Upload */}
+            <div>
+                <h3>Upload Photos for the Pattern</h3>
+                <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImageUploadForPattern}
+                />
+                {patternPhotos.length > 0 && (
+                    <div>
+                        <h4>Uploaded Photos:</h4>
+                        {patternPhotos.map((url, index) => (
+                            <div key={index}>
+                                <img src={url} alt="Pattern" style={{ width: 100, height: 100 }} />
+                                <button type="button" onClick={() => handleRemovePatternPhoto(index)}>Delete</button>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+
             {/* Action Buttons */}
             <div className="actions">
                 <button onClick={handleUpdateProject}>Save Progress</button>
@@ -205,5 +269,4 @@ const Tracking = () => {
         </div>
     );
 };
-
 export default Tracking;
