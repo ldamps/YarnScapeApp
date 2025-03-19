@@ -4,6 +4,7 @@ import { db } from '../main';
 import { getAuth } from 'firebase/auth';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getFirestore, doc, getDoc, addDoc, collection, updateDoc } from 'firebase/firestore';
+import axios from 'axios';
 
 const Publish = () => {
     const auth = getAuth();
@@ -14,6 +15,7 @@ const Publish = () => {
     const [pattern, setPattern] = useState<any>(null); // Store the pattern data
     const [authorName, setAuthorName] = useState('');
     const [coverImage, setCoverImage] = useState<File | null>(null);
+    const [coverImageUrl, setCoverImageUrl] = useState<string>(''); // To store uploaded image URL
     const [agreed, setAgreed] = useState(false);
 
     useEffect(() => {
@@ -38,14 +40,32 @@ const Publish = () => {
         setAuthorName(e.target.value);
     };
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) {
-            setCoverImage(e.target.files[0]);
+    const handleAgreeChange = () => {
+        setAgreed(!agreed);
+    };
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', 'yarnscape-images'); // Replace with your Cloudinary preset
+
+        try {
+            const response = await axios.post('https://api.cloudinary.com/v1_1/dm2icxasv/image/upload', formData);
+            const imageUrl = response.data.secure_url;
+            setCoverImageUrl(imageUrl); // Set the cover image URL once uploaded
+            setCoverImage(file); // Store the file object (optional for later use)
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            alert('Failed to upload image.');
         }
     };
 
-    const handleAgreeChange = () => {
-        setAgreed(!agreed);
+    const handleRemoveImage = () => {
+        setCoverImageUrl(''); // Clear the cover image URL
+        setCoverImage(null); // Optionally clear the file object
     };
 
     const handlePublish = async () => {
@@ -60,25 +80,23 @@ const Publish = () => {
         }
 
         try {
-            // Handle image upload if necessary (you can upload to Firebase Storage)
-            
-            // Save the pattern data into the "published-patterns" collection
-            await addDoc(collection(db, 'published-patterns'), {
-                ...pattern,
-                author: authorName,
-                
-                datePublished: new Date(),
-            });
-
-            // update the pattern to published = true
+            // Update the pattern to published = true
             const patternRef = doc(db, 'my-patterns', patternId);
             await updateDoc(patternRef, {
                 published: true, // Set published field to true
             });
-
+            
+            // Save the pattern data into the "published-patterns" collection
+            await addDoc(collection(db, 'published-patterns'), {
+                ...pattern,
+                published: true,
+                author: authorName,
+                coverImageUrl, // Add the uploaded cover image URL
+                datePublished: new Date(),
+            });
 
             alert('Pattern published successfully!');
-            navigate('/patterns'); // Redirect to the page where users can see published patterns
+            navigate('/design'); // Redirect to the page where users can see published patterns
         } catch (error) {
             console.error('Error publishing pattern:', error);
             alert('There was an error while publishing your pattern.');
@@ -97,7 +115,6 @@ const Publish = () => {
 
     return (
         <div className="publish-container">
-            <h1>Confirm Your Pattern</h1>
             <div className='publish-header'>
                 <h2>{pattern.title}</h2>
             </div>
@@ -107,13 +124,19 @@ const Publish = () => {
             </div>
 
             <div className='publish-author'>
-                <label>Author Name</label>
+                <label>Author Name: </label>
                 <input type="text" value={authorName} onChange={handleAuthorChange} required />
             </div>
 
-            <div className="publish-image">
-                <label>Cover Image</label>
-                <input type="file" accept="image/*" onChange={handleImageChange} />
+            <div className='cover-image-upload'>
+                <label>Cover Image (Optional): </label>
+                <input type="file" accept="image/*" onChange={handleImageUpload} />
+                {coverImageUrl && (
+                    <div className="cover-image-preview">
+                        <img src={coverImageUrl} alt="Cover Preview" style={{ width: '100%', maxWidth: '300px' }} />
+                        <button onClick={handleRemoveImage} className="remove-image-button">Remove Image</button>
+                    </div>
+                )}
             </div>
 
             <div className="publish-checkbox">
@@ -128,8 +151,7 @@ const Publish = () => {
                 <button onClick={handleCancel} className="cancel-button">Cancel</button>
             </div>
         </div>
-    )
-
-}
+    );
+};
 
 export default Publish;

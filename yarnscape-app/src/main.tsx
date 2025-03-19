@@ -16,6 +16,7 @@ import Create from './pages/Create'
 import Tracking from './pages/Tracking'
 import EditMyPattern from './pages/Edit'
 import Publish from './pages/Publish'
+import Pattern from './pages/Pattern'
 
 import {
   BrowserRouter as Router, Routes, Route, Navigate
@@ -62,6 +63,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <Route path="/tracking/:projectId" element={<AuthRoute><Tracking /></AuthRoute>} />
         <Route path="/edit/:patternId" element={<AuthRoute><EditMyPattern /></AuthRoute>} />
         <Route path="/publish/:patternId" element={<AuthRoute><Publish /></AuthRoute>} />
+        <Route path="/pattern/:patternId" element={<AuthRoute><Pattern /></AuthRoute>} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>

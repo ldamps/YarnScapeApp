@@ -1,123 +1,151 @@
 // For the Find pattern screen - library of free patterns created by other YarnScape users
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import BottomNav from '../components/bottomNav';
 import { db } from '../main';
 import { getAuth } from 'firebase/auth';
-import { collection, query, getDocs, where, doc, setDoc } from 'firebase/firestore';
-import './styles.css'
+import { collection, query, getDocs, where } from 'firebase/firestore';
+import './styles.css';
 
 interface Pattern {
     id: string;
     title: string;
     author: string;
+    type: string; // e.g., 'crochet', 'knitting'
+    skillLevel: string; // e.g., 'beginner', 'intermediate', 'advanced'
     published: boolean;
+    coverImageUrl?: string;
 }
 
 const Library = () => {
+    const navigate = useNavigate();
     const auth = getAuth();
     const user = auth.currentUser; // The current logged-in user
+    const [patterns, setPatterns] = useState<Pattern[]>([]); // Store fetched patterns
+    const [searchQuery, setSearchQuery] = useState<string>(''); // Search query
+    const [selectedType, setSelectedType] = useState<string>(''); // Filter by type (crochet, knitting, etc.)
+    const [selectedSkillLevel, setSelectedSkillLevel] = useState<string>(''); // Filter by skill level
+    const [filteredPatterns, setFilteredPatterns] = useState<Pattern[]>(patterns); // Patterns after applying search/filter
+    
 
-    const [publishedPatterns, setPublishedPatterns] = useState<Pattern[]>([]);
-    const [filteredPatterns, setFilteredPatterns] = useState<Pattern[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [searchQuery, setSearchQuery] = useState('');
+    useEffect(() => {
+        const fetchPatterns = async () => {
+            try {
+                // Query to get published patterns excluding the current user's patterns
+                const patternsRef = collection(db, 'published-patterns');
+                const q = query(patternsRef, where('published', '==', true));
+                const querySnapshot = await getDocs(q);
+                const fetchedPatterns: Pattern[] = [];
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    fetchedPatterns.push({
+                        id: doc.id,
+                        title: data.title,
+                        author: data.author,
+                        type: data.type,
+                        skillLevel: data.skillLevel,
+                        published: data.published,
+                        coverImageUrl: data.coverImageUrl,
+                    });
+                });
+                setPatterns(fetchedPatterns);
+            } catch (error) {
+                console.error('Error fetching patterns:', error);
+            }
+        };
 
-    // For the bottom navbar
-    const [currentTab, setCurrentTab] = useState('library');
+        fetchPatterns();
+    }, [user?.uid]); // Only run when the user's ID changes
 
-    // Function to handle the search filter
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const query = e.target.value.toLowerCase();
-        setSearchQuery(query);
-        filterPatterns(query);
-    };
+    useEffect(() => {
+        // Apply search and filter every time a search/filter changes
+        const filtered = patterns.filter((pattern) => {
+            const matchesSearchQuery =
+                pattern.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                pattern.author.toLowerCase().includes(searchQuery.toLowerCase());
 
-    // Function to filter the patterns based on the search query (both title and author)
-    const filterPatterns = (query: string) => {
-        const filtered = publishedPatterns.filter((pattern) =>
-            pattern.title.toLowerCase().includes(query) || pattern.author.toLowerCase().includes(query)
-        );
+            const matchesType = selectedType ? pattern.type.toLowerCase() === selectedType.toLowerCase() : true;
+            const matchesSkillLevel =
+                selectedSkillLevel ? pattern.skillLevel.toLowerCase() === selectedSkillLevel.toLowerCase() : true;
+
+            return matchesSearchQuery && matchesType && matchesSkillLevel;
+        });
         setFilteredPatterns(filtered);
-    };
+    }, [searchQuery, selectedType, selectedSkillLevel, patterns]);
 
+    const [currentTab, setCurrentTab] = useState('library');
+    
     const handleTabChange = (tab: string) => {
         setCurrentTab(tab); // Update the active tab
     };
 
-    // Fetch published patterns from Firestore
-    useEffect(() => {
-        const fetchPublishedPatterns = async () => {
-            if (user) {
-                // Query for all published patterns
-                const q = query(collection(db, 'published-patterns'), where('published', '==', true));
-                const querySnapshot = await getDocs(q);
-                const patternsList: Pattern[] = [];
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    if (data.title && data.author !== user.displayName) { // Exclude the current user's patterns
-                        patternsList.push({ id: doc.id, title: data.title, author: data.author, published: data.published });
-                    }
-                });
-                setPublishedPatterns(patternsList);
-                setFilteredPatterns(patternsList);
-                setLoading(false);
-            }
-        };
-
-        fetchPublishedPatterns();
-    }, [user]);
-
-    // Handle Track Button
-    const handleTrack = async (patternId: string) => {
-        
+    // Handle redirecting to pattern detail page
+    const handlePatternClick = (patternId: string) => {
+        navigate(`/pattern/${patternId}`);
     };
 
-    // Handle Save Button
-    const handleSave = async (patternId: string) => {
-        
+    // Handle saving the pattern (implement save functionality as needed)
+    const handleSavePattern = (patternId: string) => {
+        console.log('Pattern saved:', patternId);
+        // Implement save functionality here, for example, saving it to a list of saved patterns
     };
 
     return (
         <div className="library-container">
-            <div className="library-header">
-                <h1>Pattern Library</h1>
+            <h1>Pattern Library</h1>
+
+            {/* Search Bar */}
+            <div className="search-bar">
+                <input
+                    type="text"
+                    placeholder="Search by pattern name or author"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                />
             </div>
 
-            <div className="library-filtering">
-                <div className="library-searchbar">
-                    <input
-                        type="text"
-                        placeholder="Search by title or author..."
-                        value={searchQuery}
-                        onChange={handleSearchChange}
-                    />
-                </div>
+            {/* Filter Options */}
+            <div className="filter-options">
+                <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)}>
+                    <option value="">All Types</option>
+                    <option value="crochet">Crochet</option>
+                    <option value="knitting">Knitting</option>
+                </select>
+
+                <select value={selectedSkillLevel} onChange={(e) => setSelectedSkillLevel(e.target.value)}>
+                    <option value="">All Skill Levels</option>
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                </select>
             </div>
 
-            <div className="library-body">
-                {loading ? (
-                    <p>Loading...</p>
+            {/* Pattern List */}
+            <div className="patterns-list">
+                {filteredPatterns.length === 0 ? (
+                    <p>No patterns found.</p>
                 ) : (
-                    <div className="pattern-list">
-                        {filteredPatterns.length > 0 ? (
-                            <ul>
-                                {filteredPatterns.map((pattern) => (
-                                    <li key={pattern.id}>
-                                        <div className="pattern-item">
-                                            <span>{pattern.title}</span>
-                                            <span> by {pattern.author}</span>
-                                            <div className="pattern-actions">
-                                                <button onClick={() => handleTrack(pattern.id)}>Track</button>
-                                                <button onClick={() => handleSave(pattern.id)}>Save</button>
-                                            </div>
-                                        </div>
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p>No patterns found.</p>
-                        )}
-                    </div>
+                    filteredPatterns.map((pattern) => (
+                        <div key={pattern.id} className="pattern-card">
+                            {/* Show cover image or "No Photo" box */}
+                            <div className="pattern-photo">
+                                {pattern.coverImageUrl ? (
+                                    <img src={pattern.coverImageUrl} alt={pattern.title} />
+                                ) : (
+                                    <div className="no-photo-box">No Photo</div>
+                                )}
+                            </div>
+                            <h3 className="pattern-title" onClick={() => handlePatternClick(pattern.id)}>
+                                {pattern.title}
+                            </h3>
+                            <p>Author: {pattern.author}</p>
+                            <p>Type: {pattern.type}</p>
+                            {/* Save button */}
+                            <button onClick={() => handleSavePattern(pattern.id)} className="save-button">
+                                save
+                            </button>
+                        </div>
+                    ))
                 )}
             </div>
 
