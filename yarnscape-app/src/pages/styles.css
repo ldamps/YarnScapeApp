@@ -535,7 +535,6 @@ User profile styles */
 /* saved patterns section: */
 
 
-
 /*---------------------------------------------------
 Settings styles */
 
@@ -1467,7 +1466,241 @@ Track project styles */
 
 /*---------------------------------------------------
 Tracking styles */
+.tracking-page {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: var(--c-background-primary);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-left: 2%;
+    margin-top: 3%;
+}
 
+h1, h2, h3 {
+    color: var(--c-text-primary);
+}
+
+/* Project Header Styles */
+.project-header {
+    background-color: var(--c-background-primary);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.project-header h1 {
+    font-size: var(--text-header1size);
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.project-header div {
+    font-size: var(--text-xsmall);
+    color: var(--c-text-primary);
+    margin-top: 5px;
+}
+
+.project-header span {
+    margin-right: 15px;
+}
+
+/* Project Meta (Created At & Time Spent) */
+.project-meta {
+    background-color: var(--c-background-primary);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.project-meta p {
+    margin: 10px 0;
+    font-size: var(--text-size-input);
+    color: var(--c-text-primary);
+}
+
+.project-meta strong {
+    font-weight: bold;
+}
+
+/* Goal Input */
+.goal {
+    background-color: var(--c-background-primary);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.goal label {
+    font-size: var(--text-subheadersize);
+    color: var(--c-text-primary);
+}
+
+.goal input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: var(--text-size-input);
+    color: var(--c-text-primary);
+}
+
+.goal input:focus {
+    background-color: var(--c-background-inputfocus);
+}
+
+.sections {
+    background-color: var(--c-background-primary);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sectionName {
+    font-size: var(--text-subheadingsize-1);
+    font-weight: bold;
+    color: var(--c-text-primary);
+    margin-bottom: 15px;
+}
+
+.sections div {
+    margin-bottom: 10px;
+}
+
+.sections .sectionTitle {
+    font-size: var(--text-size);
+    background-color: var(--c-background-primary);
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    color: var(--c-text-primary);
+}
+
+.sections .sectionInstructions {
+    background-color: var(--c-background-primary);
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+
+/* Pattern Photos */
+.pattern-photos {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pattern-photos input[type="file"] {
+    display: block;
+    margin-top: 10px;
+}
+
+.pattern-photos h4 {
+    margin-top: 15px;
+}
+
+.pattern-photos div {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.pattern-photos img {
+    margin-right: 10px;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}
+
+.pattern-photos button {
+    padding: 5px 10px;
+    background-color: var(--c-background-button);
+    border: none;
+    color: var(--c-text-primary);
+    border-radius: 4px;
+    font-size: var(--text-size);
+}
+
+/* Notes Section */
+.notes {
+    background-color: var(--c-background-primary);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.notes h3 {
+    font-size: var(--text-subheadingsize-1);
+    font-weight: bold;
+    color: var(--c-text-primary);
+}
+
+.notes textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: var(--text-size-input);
+    color: var(--c-text-primary);
+    resize: vertical;
+}
+
+.notes textarea:focus {
+    background-color: var(--c-background-inputfocus);
+}
+
+.notes button {
+    padding: 5px 10px;
+    background-color: var(--c-background-button);
+    border: none;
+    color: var(--c-text-primary);
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: var(--text-size-input);
+}
+
+/* Start/Stop Listening Button */
+button {
+    padding: 10px 20px;
+    background-color: var(--c-background-button);
+    color: var(--c-text-primary);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 15px;
+    font-size: var(--text-size-input);
+}
+
+/* Action Buttons */
+.actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.actions button {
+    width: 48%;
+    padding: 10px 0;
+    background-color: var(--c-background-button);
+    color: var(--c-text-primary);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: var(--text-size-input);
+}
 
 /*---------------------------------------------------
 Pattern library styles */

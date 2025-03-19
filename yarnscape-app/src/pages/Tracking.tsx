@@ -206,6 +206,7 @@ const Tracking = () => {
             const docRef = doc(db, 'tracking-projects', projectId);
             await updateDoc(docRef, updatedProjectData);
             alert('Project progress saved successfully!');
+            navigate('/track');
         } catch (error) {
             console.error('Error saving project progress:', error);
             alert('Error saving project progress.');
@@ -222,6 +223,10 @@ const Tracking = () => {
         setCollapsedSections((prevState) =>
             prevState.map((collapsed, i) => (i === index ? !collapsed : collapsed))
         );
+    };
+
+    const handleCancel = () => {
+        navigate('/track');
     };
 
     // Loading state and display of the project data
@@ -244,6 +249,12 @@ const Tracking = () => {
                 </div>
             </div>
 
+            {/* Date and Time Spent */}
+            <div className="project-meta">
+                <p><strong>Created At:</strong> {projectData.createdAt.toDate().toLocaleDateString()}</p>
+                <p><strong>Time Spent:</strong> {timeSpent} hours</p>
+            </div>
+
             {/* Goal Input */}
             <div className="goal">
                 <label>
@@ -256,14 +267,9 @@ const Tracking = () => {
                 </label>
             </div>
 
-            {/* Date and Time Spent */}
-            <div className="project-meta">
-                <p><strong>Created At:</strong> {projectData.createdAt.toDate().toLocaleDateString()}</p>
-                <p><strong>Time Spent:</strong> {timeSpent} hours</p>
-            </div>
-
             {/* Sections */}
-            <h2>Sections</h2>
+            <div className="sections">
+            <h2 className='sectionName'>Sections: </h2>
             {projectData.sections.map((section, index) => {
                 const instructions = section.instructions.split('\n'); // Split instructions by newlines
 
@@ -299,10 +305,11 @@ const Tracking = () => {
                     </div>
                 );
             })}
+            </div>
 
             {/* Pattern-wide Photos Upload */}
-            <div>
-                <h3>Upload Photos for the Pattern</h3>
+            <div className="pattern-photos">
+                <h3>Upload Photos for the Pattern: </h3>
                 <input
                     type="file"
                     accept="image/*"
@@ -323,7 +330,8 @@ const Tracking = () => {
             </div>
 
             {/* Notes Section */}
-            <h3>Notes</h3>
+            <div className='notes'>
+            <h3>Notes: </h3>
             {notes.map((note, index) => (
                 <div key={index}>
                     <textarea
@@ -335,23 +343,22 @@ const Tracking = () => {
                     <button onClick={() => handleDeleteNote(index)}>Delete Note</button>
                 </div>
             ))}
-            <button onClick={handleAddNote}>Add New Note</button>
+            <button onClick={handleAddNote}>Add Note</button>
 
             {/* Start/Stop Listening Button */}
             <div>
                 {isListening ? (
-                    <button onClick={stopListening}>Stop Listening</button>
+                    <button onClick={stopListening}>Stop Recording</button>
                 ) : (
-                    <button onClick={startListening}>Start Listening</button>
+                    <button onClick={startListening}>Start Recording</button>
                 )}
             </div>
-
-
+            </div>
 
             {/* Action Buttons */}
             <div className="actions">
                 <button onClick={handleUpdateProject}>Save Progress</button>
-                <button onClick={() => navigate('/')}>Back to Home</button>
+                <button onClick={handleCancel}>Cancel</button>
             </div>
         </div>
     );

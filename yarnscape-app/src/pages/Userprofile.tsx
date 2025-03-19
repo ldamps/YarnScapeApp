@@ -29,6 +29,7 @@ const Userprofile = () => {
     const [myPatterns, setMyPatterns] = useState<Pattern[]>([]);
     const [loading, setLoading] = useState(true);
     const [trackingProjects, setTrackingProjects] = useState<TrackingProject[]>([]);
+    const [savedPatterns, setSavedPatterns] = useState<Pattern[]>([]);
     const [loadingTracking, setLoadingTracking] = useState(true);
 
     const navigate = useNavigate();
@@ -81,6 +82,29 @@ const Userprofile = () => {
                 setLoadingTracking(false);
             };
             fetchTrackingProjects();
+        }
+    }, [user, db]);
+
+    // Fetch the user's saved patterns
+    useEffect(() => {
+        if (user) {
+            const fetchSavedPatterns = async () => {
+                const q = query(collection(db, 'saved-patterns'), where('userId', '==', user.uid));
+                const querySnapshot = await getDocs(q);
+                const savedPatternList: Pattern[] = [];
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    if (data.title) {
+                        savedPatternList.push({
+                            id: doc.id,
+                            title: data.title,
+                            published: data.published || false, // Include 'published' if available
+                        });
+                    }
+                });
+                setSavedPatterns(savedPatternList);
+            };
+            fetchSavedPatterns();
         }
     }, [user, db]);
 
@@ -229,6 +253,88 @@ const Userprofile = () => {
         }
     };
 
+    // Handle unsaving a pattern
+    const handleUnsavePattern = async (patternId: string) => {
+        try {
+            const patternRef = doc(db, 'saved-patterns', patternId);
+            await deleteDoc(patternRef);
+
+            // Remove the pattern from the state
+            const updatedSavedPatterns = savedPatterns.filter((pattern) => pattern.id !== patternId);
+            setSavedPatterns(updatedSavedPatterns);
+            alert('Pattern removed from saved patterns.');
+        } catch (error) {
+            console.error('Error unsaving pattern:', error);
+            alert('There was an error unsaving the pattern.');
+        }
+    };
+
+    // Handle tracking a saved pattern
+    const handleTrackPattern = async (patternId: string) => {
+        if (!user) {
+            alert('Please log in to track patterns.');
+            return;
+        }
+    
+        try {
+            // Check if the pattern exists in the ' ' collection
+            const patternRef = doc(db, 'saved-patterns', patternId);
+            const patternDoc = await getDoc(patternRef);
+    
+            // Check if the pattern exists
+            if (!patternDoc.exists()) {
+                alert('Pattern not found.');
+                console.log('Pattern not found in "saved-patterns" collection:', patternId); // Logging for debugging
+                return;
+            }
+    
+            const patternData = patternDoc.data();
+            console.log('Pattern found:', patternData); // Logging the pattern data for debugging
+    
+            // Check if the user is already tracking the pattern
+            const q = query(collection(db, 'tracking-projects'), where('userId', '==', user.uid), where('patternId', '==', patternId));
+            const querySnapshot = await getDocs(q);
+    
+            if (!querySnapshot.empty) {
+                const existingTrackingProject = querySnapshot.docs[0];
+                const trackingData = existingTrackingProject.data();
+    
+                if (trackingData.completed) {
+                    alert('You have already completed tracking this pattern.');
+                    return;
+                }
+    
+                const trackingProjectId = existingTrackingProject.id;
+                navigate(`/tracking/${trackingProjectId}`);
+            } else {
+                // If not already tracking, add the pattern to the tracking-projects collection
+                const newTrackingProject = {
+                    userId: user.uid,
+                    patternId: patternId,
+                    title: patternData?.title,
+                    type: patternData?.type,
+                    sections: patternData?.sections,
+                    tags: patternData?.tags,
+                    materials: patternData?.materials,
+                    skillLevel: patternData?.skillLevel,
+                    createdAt: new Date(),
+                    goal: '',
+                    timeSpent: 0,
+                    lastEdited: new Date(),
+                    completed: false,
+                    lastRowIndex: 0,
+                };
+    
+                const trackingProjectRef = await addDoc(collection(db, 'tracking-projects'), newTrackingProject);
+                navigate(`/tracking/${trackingProjectRef.id}`);
+            }
+        } catch (error) {
+            console.error('Error handling track pattern:', error);
+            alert('There was an error tracking the pattern.');
+        }
+    };
+
+
     return (
         <div className="profile-container">
 
@@ -324,6 +430,26 @@ const Userprofile = () => {
 
                 <div className="saved-patterns">
                     <h2>Saved patterns: </h2>
+                    <div className="savedPatterns-container">
+                        {savedPatterns.length > 0 ? (
+                            <ul>
+                                {savedPatterns.map((pattern) => (
+                                    <li key={pattern.id}>
+                                        <div className="savedPattern-item">
+                                            <span>{pattern.title}</span>
+                                            <div className="savedPattern-actions">
+                                                <button onClick={() => handleTrackPattern(pattern.id)}>Track</button>
+                                                <button onClick={() => handleUnsavePattern(pattern.id)}>Unsave</button>
+                                                <button>View</button>
+                                            </div>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p>No saved patterns.</p>
+                        )}
+                    </div>
                 </div>
             </div>
 
