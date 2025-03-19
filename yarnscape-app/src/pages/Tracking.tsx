@@ -70,6 +70,7 @@ const Tracking = () => {
                     setCompleted(projectData.completed);
                     setSelectedRowIndex(projectData.lastRowIndex); // Set the last row index
                     setCollapsedSections(new Array(projectData.sections.length).fill(true)); // Set collapsible sections state
+                    setPatternPhotos(projectData.patternPhotos || []); // Set existing pattern photos from Firestore
                 } else {
                     console.error('Pattern not found');
                     alert("Project not found.");
@@ -160,8 +161,6 @@ const Tracking = () => {
             prevState.map((collapsed, i) => (i === index ? !collapsed : collapsed))
         );
     };
-
-    
 
     // Loading state and display of the project data
     if (loading) {
