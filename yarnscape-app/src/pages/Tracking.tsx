@@ -6,6 +6,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
 import axios from 'axios';
 import './styles.css'
+import SpeechToText from '../components/speechToText';
 
 interface Section {
     title: string;
@@ -29,6 +30,7 @@ interface TrackingProject {
     completed: boolean;
     lastRowIndex: number;
     patternPhotos?: string[];
+    notes: string[];
 }
 
 const Tracking = () => {
@@ -47,6 +49,7 @@ const Tracking = () => {
     const [collapsedSections, setCollapsedSections] = useState<boolean[]>([]);
     const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null);
     const [patternPhotos, setPatternPhotos] = useState<string[]>([]); // For pattern-wide photos
+    const [notes, setNotes] = useState<string[]>([]);
 
     // Fetch project data on mount
     useEffect(() => {
@@ -71,6 +74,7 @@ const Tracking = () => {
                     setSelectedRowIndex(projectData.lastRowIndex); // Set the last row index
                     setCollapsedSections(new Array(projectData.sections.length).fill(true)); // Set collapsible sections state
                     setPatternPhotos(projectData.patternPhotos || []); // Set existing pattern photos from Firestore
+                    setNotes(projectData.notes || []);
                 } else {
                     console.error('Pattern not found');
                     alert("Project not found.");
@@ -87,6 +91,24 @@ const Tracking = () => {
 
         fetchProject();
     }, [projectId, db, navigate, user]);
+
+    // Handle note change
+    const handleNoteChange = (index: number, value: string) => {
+        const updatedNotes = [...notes];
+        updatedNotes[index] = value;
+        setNotes(updatedNotes);
+    };
+
+    // Add a new note
+    const handleAddNote = () => {
+        setNotes([...notes, '']); // Add an empty note
+    };
+
+    // Delete a note
+    const handleDeleteNote = (index: number) => {
+        const updatedNotes = notes.filter((_, i) => i !== index);
+        setNotes(updatedNotes);
+    };
 
     // Handle image upload for the whole pattern
     const handleImageUploadForPattern = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -137,7 +159,7 @@ const Tracking = () => {
             timeSpent: timeSpent,
             completed: completed,
             lastRowIndex: selectedRowIndex !== null ? selectedRowIndex : projectData.lastRowIndex, // Ensure a valid value for lastRowIndex
-            lastEdited: new Date(), patternPhotos: patternPhotos,
+            lastEdited: new Date(), patternPhotos: patternPhotos, notes: notes,
         };
     
         try {
@@ -259,6 +281,22 @@ const Tracking = () => {
                     </div>
                 )}
             </div>
+
+            {/* Notes Section */}
+            <h3>Notes</h3>
+            {notes.map((note, index) => (
+                <div key={index}>
+                    <textarea
+                        value={note}
+                        onChange={(e) => handleNoteChange(index, e.target.value)}
+                        rows={3}
+                        cols={50}
+                    />
+                    <button onClick={() => handleDeleteNote(index)}>Delete Note</button>
+                </div>
+            ))}
+            <button onClick={handleAddNote}>Add New Note</button>
+
 
             {/* Action Buttons */}
             <div className="actions">
