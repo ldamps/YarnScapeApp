@@ -6,7 +6,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
 import axios from 'axios';
 import './styles.css'
-import SpeechToText from '../components/speechToText';
 
 interface Section {
     title: string;
@@ -50,6 +49,46 @@ const Tracking = () => {
     const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null);
     const [patternPhotos, setPatternPhotos] = useState<string[]>([]); // For pattern-wide photos
     const [notes, setNotes] = useState<string[]>([]);
+
+    // Add Speech Recognition functionality
+    const [isListening, setIsListening] = useState(false);
+    const [recognition, setRecognition] = useState<any>(null);
+
+    useEffect(() => {
+        // Set up the SpeechRecognition API if available
+        if ('webkitSpeechRecognition' in window) {
+            const SpeechRecognition = (window as any).webkitSpeechRecognition;
+            const recognitionInstance = new SpeechRecognition();
+            recognitionInstance.interimResults = true; // Allows for partial recognition
+            recognitionInstance.lang = 'en-US';
+
+            recognitionInstance.onresult = (event: any) => {
+                const transcript = event.results[event.results.length - 1][0].transcript;
+                if (event.results[0].isFinal) {
+                    setNotes((prevNotes) => [...prevNotes, transcript]);
+                }
+            };
+
+            setRecognition(recognitionInstance);
+        } else {
+            alert("Speech Recognition is not supported in this browser.");
+        }
+    }, []);
+
+    const startListening = () => {
+        if (recognition) {
+            setIsListening(true);
+            recognition.start(); // Start listening to speech
+        }
+    };
+
+    const stopListening = () => {
+        if (recognition) {
+            setIsListening(false);
+            recognition.stop(); // Stop listening
+        }
+    };
+
 
     // Fetch project data on mount
     useEffect(() => {
@@ -109,6 +148,7 @@ const Tracking = () => {
         const updatedNotes = notes.filter((_, i) => i !== index);
         setNotes(updatedNotes);
     };
+
 
     // Handle image upload for the whole pattern
     const handleImageUploadForPattern = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -296,6 +336,16 @@ const Tracking = () => {
                 </div>
             ))}
             <button onClick={handleAddNote}>Add New Note</button>
+
+            {/* Start/Stop Listening Button */}
+            <div>
+                {isListening ? (
+                    <button onClick={stopListening}>Stop Listening</button>
+                ) : (
+                    <button onClick={startListening}>Start Listening</button>
+                )}
+            </div>
+
 
 
             {/* Action Buttons */}
