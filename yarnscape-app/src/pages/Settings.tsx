@@ -1,7 +1,6 @@
-// For the setting screen
+// For the setting screen --> 'change password' and 'delete account' features are not not in MVP so these buttons are not functional
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-//import {FaEnvelope, FaArrowCircleLeft} from 'react-icons/fa';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faArrowAltCircleLeft } from '@fortawesome/free-solid-svg-icons';
 import { getAuth, signOut } from 'firebase/auth';
@@ -13,18 +12,25 @@ import './styles.css'
 const Settings = () => {
     const auth = getAuth();
     const navigate = useNavigate();
+
+    // Navigate to privacy policy
     const navigateToPPolicy = () => {
         navigate('/privacypolicy');
     }
+
+    // Navigate to terms+conditions
     const navigateToTermsCons = () => {
         navigate('/termsconditions')
     }
+
+    // Navigate to the user profile
     const navigateToProfile = () => {
         navigate('/userprofile')
     }
 
-    const [userEmail, setUserEmail] = useState<string | null>(null);
+    const [userEmail, setUserEmail] = useState<string | null>(null); // consts for the user's email
 
+    // Get the current users email
     useEffect(() => {
         const auth = getAuth();
         const user = auth.currentUser;
@@ -35,7 +41,7 @@ const Settings = () => {
     }, []);
 
 
-    // Function to sign the current user out
+    // Function to sign the current user out and navigate them to the login page
     const handleSignout = async () => {
         try {
             await auth.signOut();
@@ -50,7 +56,7 @@ const Settings = () => {
         <div className="settings-container">
             <div className="settings-header">
                 <div className="back-icon" onClick={navigateToProfile}>
-                    <FontAwesomeIcon icon={faArrowAltCircleLeft} size="2x" />
+                    <FontAwesomeIcon icon={faArrowAltCircleLeft} size="1x" />
                 </div>
                 <h1>Settings and Preferences</h1>
             </div>
@@ -83,7 +89,6 @@ const Settings = () => {
                         <p>error...</p>
                     )}
                 </div>
-
             </div>
 
             <div className="setting-body-buttons">
@@ -100,7 +105,7 @@ const Settings = () => {
             </div>
 
             <div className="settings-footer">
-                <FontAwesomeIcon icon={faEnvelope} size="2x" />
+                <FontAwesomeIcon icon={faEnvelope} size="1x" />
                 <span>enquiries@yarnscape.com</span>
             </div>
         </div>

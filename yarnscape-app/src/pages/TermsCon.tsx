@@ -6,10 +6,7 @@ import { faArrowAltCircleLeft } from '@fortawesome/free-solid-svg-icons';
 const Termscon = () => {
     const navigate = useNavigate();
     
-    /*const navigateToSettings = () => {
-        navigate('/settings');
-    }*/
-
+    // Navigate back to the page before
     const handleGoBack = () => {
         navigate(-1);
     }
@@ -17,7 +14,7 @@ const Termscon = () => {
     return (
         <div className="termscons-container">
             <div className="termscons-header">
-                <div className="profile-icon" onClick={handleGoBack}>
+                <div className="back-icon" onClick={handleGoBack}>
                     <FontAwesomeIcon icon={faArrowAltCircleLeft} size="2x" />
                 </div>
                 <h1>YarnScape's Terms and Conditions</h1>

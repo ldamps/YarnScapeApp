@@ -1,9 +1,11 @@
+// Text preference for YarnScape pages
+
 import { useState, useEffect } from 'react';
 
 const TextPref = () => {
     const [selectedSize, setSelectedSize] = useState<'small' | 'normal' | 'large'>('normal');
 
-  // Persist the text size choice in localStorage
+  // Load the text size choice in localStorage
     useEffect(() => {
         const savedSize = localStorage.getItem('textSize') as 'small' | 'normal' | 'large' | null;
         if (savedSize) {
@@ -20,21 +22,20 @@ const TextPref = () => {
 
     // Apply the selected text size to the body by adding the appropriate class
     useEffect(() => {
-    // Remove all text size classes first
-    document.body.classList.remove('small-text', 'normal-text', 'large-text');
+        document.body.classList.remove('small-text', 'normal-text', 'large-text'); // Remove all text size classes first
 
-    switch (selectedSize) {
-        case 'small':
-            document.body.classList.add('small-text');
-            break;
-        case 'normal':
-            document.body.classList.add('normal-text');
-            break;
-        case 'large':
-            document.body.classList.add('large-text');
-            break;
-        default:
-            document.body.classList.add('normal-text');
+        switch (selectedSize) {
+            case 'small':
+                document.body.classList.add('small-text');
+                break;
+            case 'normal':
+                document.body.classList.add('normal-text');
+                break;
+            case 'large':
+                document.body.classList.add('large-text');
+                break;
+            default:
+                document.body.classList.add('normal-text');
         }
     }, [selectedSize]);
 

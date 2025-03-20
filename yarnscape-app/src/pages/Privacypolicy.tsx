@@ -1,10 +1,13 @@
 // For the Privacy policy screen
+
 import {useNavigate} from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowAltCircleLeft } from '@fortawesome/free-solid-svg-icons';
 
 const Privacypolicy = () => {
     const navigate = useNavigate();
+
+    // Navigate back to settings
     const navigateToSettings = () => {
         navigate('/settings');
     }
@@ -12,7 +15,7 @@ const Privacypolicy = () => {
     return (
         <div className="policy-container">
             <div className="policy-header">
-                <div className="profile-icon" onClick={navigateToSettings}>
+                <div className="back-icon" onClick={navigateToSettings}>
                     <FontAwesomeIcon icon={faArrowAltCircleLeft} size="2x" />
                 </div>
                 <h1>YarnScape's Privacy Policy</h1>
@@ -69,7 +72,6 @@ const Privacypolicy = () => {
                 </p>
 
                 <p>By using YarnScape, you acknowledge that you have read and understand this Privacy Policy and agree to its terms.</p>
-
             </div>
         </div>
     )
