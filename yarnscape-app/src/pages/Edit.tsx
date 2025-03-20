@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getFirestore, doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
+import axios from 'axios';
 
 interface Section {
     title: string;
@@ -96,6 +97,36 @@ const Edit = () => {
         setSkillLevel(level);
     };
 
+    // Handle image upload or capture
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, sectionIndex: number) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', 'yarnscape-images'); // Replace with your Cloudinary preset
+
+        try {
+            const response = await axios.post('https://api.cloudinary.com/v1_1/dm2icxasv/image/upload', formData);
+            const imageUrl = response.data.secure_url;
+
+            // Update the section's photoUrl
+            const updatedSections = [...sections];
+            updatedSections[sectionIndex].photoUrl = imageUrl;
+            setSections(updatedSections);
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            alert('Failed to upload image.');
+        }
+    };
+
+    // Handle photo removal
+    const handleRemovePhoto = (sectionIndex: number) => {
+        const updatedSections = [...sections];
+        updatedSections[sectionIndex].photoUrl = ''; // Clear the photo URL
+        setSections(updatedSections);
+    };
+
     // Submit the form
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -168,7 +199,7 @@ const Edit = () => {
                 tags: tags,
                 materials: materials,
                 type: patternType,
-                pubished: false, // Mark the pattern as published
+                published: false, // Mark the pattern as published
                 skillLevel: skillLevel,
             });
 
@@ -181,11 +212,11 @@ const Edit = () => {
     };
 
     return (
-        <div className="create-container">
+        <div className="edit-container">
             <form onSubmit={handleSubmit}>
-                <div className="create-headerSection">
+                <div className="edit-headerSection">
                     
-                    <div className="create-patternTitle">
+                    <div className="edit-patternTitle">
                         <input
                             placeholder="Pattern title..."
                             type="text"
@@ -194,7 +225,7 @@ const Edit = () => {
                             required
                         />
                     </div>
-                    <div className="create-patternType">
+                    <div className="edit-patternType">
                         <label>
                             <input
                                 type="radio"
@@ -218,7 +249,7 @@ const Edit = () => {
                     </div>
                 </div>
 
-                <div className="create-skillLevel">
+                <div className="edit-skillLevel">
                     <label>
                         <input
                             type="radio"
@@ -251,8 +282,8 @@ const Edit = () => {
                     </label>
                 </div>
 
-                <div className="create-body-sections">
-                    <label className="sectionLabel">Sections</label>
+                <div className="edit-body-sections">
+                    <label className="edit-sectionLabel">Sections</label>
                     {sections.map((section, index) => (
                         <div key={index}>
                             <div>
@@ -271,37 +302,57 @@ const Edit = () => {
                                     onChange={(e) => handleSectionChange(index, 'instructions', e.target.value)}
                                     required
                                 />
-                                <button>Add photo</button>
                             </div>
-                            <button type="button" onClick={() => removeSection(index)}>
+                            <div>
+                                {/* Add Image Upload Button */}
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    capture="user"
+                                    onChange={(e) => handleImageUpload(e, index)}
+                                />
+                                {/* Display the uploaded image */}
+                                {section.photoUrl && (
+                                    <div>
+                                        <img src={section.photoUrl} alt="Section" style={{ width: 100, height: 100 }} />
+                                        <button className='editDeletePhotoBtn'
+                                            type="button"
+                                            onClick={() => handleRemovePhoto(index)}
+                                        >
+                                            Remove Photo
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                            <button className="editSectionBtn" type="button" onClick={() => removeSection(index)}>
                                 Remove Section
                             </button>
                         </div>
                     ))}
-                    <button type="button" onClick={addSection}>
+                    <button className="editSectionBtn" type="button" onClick={addSection}>
                         Add Section
                     </button>
                 </div>
 
-                <div className="create-optional">
+                <div className="edit-optional">
                     <div className="create-tags">
                         <label>Tags (comma separated): </label>
                         <input type="text" value={tags.join(', ')} onChange={handleTagChange} />
                     </div>
 
-                    <div className="create-materials">
+                    <div className="edit-materials">
                         <label>Materials (comma separated): </label>
                         <input type="text" value={materials.join(', ')} onChange={handleMaterialsChange} />
                     </div>
                 </div>
 
-                <div className="createbuttons">
-                    <div className="createbuttons-row">
+                <div className="editbuttons">
+                    <div className="editbuttons-row">
                         <button type="submit">Save</button>
                         <button onClick={handlePublish}>Publish</button>
                     </div>
                     
-                    <div className="editbuttons-row">
+                    <div className="editbuttons-row2">
                         <button onClick={handleCancel}>Cancel</button>
                         <button onClick={handleDelete}>Delete</button>
                     </div>

@@ -230,14 +230,14 @@ const Create = () => {
                                 {section.photoUrl && (
                                     <div>
                                         <img src={section.photoUrl} alt="Section" style={{ width: 100, height: 100 }} />
-                                        <button type="button" onClick={() => handleRemovePhoto(index)}>Delete Photo</button>
+                                        <button className="deletePhotoBtn" type="button" onClick={() => handleRemovePhoto(index)}>Delete Photo</button>
                                     </div>
                                 )}
                             </div>
-                            <button type="button" onClick={() => removeSection(index)}>Remove Section</button>
+                            <button className="sectionButton" type="button" onClick={() => removeSection(index)}>Remove Section</button>
                         </div>
                     ))}
-                    <button type="button" onClick={addSection}>Add Section</button>
+                    <button className="sectionButton" type="button" onClick={addSection}>Add Section</button>
                 </div>
 
                 <div className="create-optional">

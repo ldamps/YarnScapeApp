@@ -134,6 +134,7 @@ const Design = () => {
         try {
             const publishedPatternRef = doc(db, 'published-patterns', patternId);
             await deleteDoc(publishedPatternRef);
+            
 
             const myPatternRef = doc(db, 'my-patterns', patternId);
             await updateDoc(myPatternRef, {
