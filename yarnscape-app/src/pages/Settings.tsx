@@ -39,7 +39,8 @@ const Settings = () => {
     const handleSignout = async () => {
         try {
             await auth.signOut();
-            window.location.href='/login';
+            //window.location.href='/login';
+            navigate('/login')
         } catch (error) {
             console.log(error);
         }
