@@ -532,7 +532,29 @@ User profile styles */
     text-align: center;
 }
 
-/* saved patterns section: */
+/* badges section: */
+.badges-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.badge {
+    background-color: var(--c-background-hover);
+    color: var(--c-text-primary);
+    font-size: 1rem;
+    padding: 8px 12px;
+    border-radius: 25px;
+    text-align: center;
+    display: inline-block;
+    font-weight: bold;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.badges-list p {
+    font-size: var(--text-size-input);
+    color: var(--c-text-primary);
+}
 
 
 /*---------------------------------------------------
