@@ -19,35 +19,11 @@ import EditMyPattern from './pages/Edit'
 import Publish from './pages/Publish'
 import Pattern from './pages/Pattern'
 
-import {
-  BrowserRouter as Router, Routes, Route, Navigate
-} from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
-import { getAuth } from 'firebase/auth'
-import { getStorage } from 'firebase/storage'
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyANPim1rz1Q-1Kg6PdOO8QrsIAnNA_twqg",
-  authDomain: "yarnscape-7fa2d.firebaseapp.com",
-  projectId: "yarnscape-7fa2d",
-  storageBucket: "yarnscape-7fa2d.firebasestorage.app",
-  messagingSenderId: "869358734820",
-  appId: "1:869358734820:web:aaa82ec58ebe7325bd0bf1"
-};
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-// Initialise cloud firestore
-const db = getFirestore(app);
-const auth = getAuth(app);
-const storage = getStorage(app);
-
-
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
-    <Router basename="/YarnScapeApp">
+const App = () => {
+    return (
+        <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
@@ -68,8 +44,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
-  </React.StrictMode>,
-)
+    )
+}
 
-export {app, db, auth, storage};
-
+export default App;
