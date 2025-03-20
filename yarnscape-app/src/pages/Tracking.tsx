@@ -226,7 +226,7 @@ const Tracking = () => {
     };
 
     const handleCancel = () => {
-        navigate('/track');
+        navigate(-1);
     };
 
     // Loading state and display of the project data

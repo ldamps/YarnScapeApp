@@ -38,7 +38,7 @@ const Pattern = () => {
 
     const handleGoBack = () => {
         navigate(-1);
-    }
+    };
 
     useEffect(() => {
         if (!patternId) {
@@ -46,10 +46,18 @@ const Pattern = () => {
             setLoading(false);
             return;
         }
+
         const fetchPatternDetails = async () => {
             try {
-                const patternRef = doc(db, 'published-patterns', patternId);
-                const patternDoc = await getDoc(patternRef);
+                // Try fetching the pattern from the 'published-patterns' collection first
+                let patternRef = doc(db, 'published-patterns', patternId);
+                let patternDoc = await getDoc(patternRef);
+
+                // If not found in published-patterns, try the saved-patterns collection
+                if (!patternDoc.exists()) {
+                    patternRef = doc(db, 'saved-patterns', patternId);
+                    patternDoc = await getDoc(patternRef);
+                }
 
                 if (patternDoc.exists()) {
                     const patternData = patternDoc.data();
@@ -61,9 +69,10 @@ const Pattern = () => {
                         sections: patternData.sections,
                         tags: patternData.tags,
                         materials: patternData.materials,
-                        published: patternData.published,
+                        published: patternData.published ?? true, // Assuming saved patterns have `published` as true if not specified
                     });
 
+                    // If the user is logged in, check if this pattern is saved
                     if (user) {
                         const savedPatternsRef = collection(db, 'saved-patterns');
                         const q = query(savedPatternsRef, where('userId', '==', user.uid), where('patternId', '==', patternId));
@@ -72,7 +81,6 @@ const Pattern = () => {
                             setIsSaved(true); // Pattern is saved by the user
                         }
                     }
-
                 } else {
                     setError('Pattern not found.');
                 }
@@ -186,7 +194,7 @@ const Pattern = () => {
     return (
         <div className="pattern-details-container">
             <div className="back-icon" onClick={handleGoBack}>
-                    <FontAwesomeIcon icon={faArrowAltCircleLeft} size="1x" />
+                <FontAwesomeIcon icon={faArrowAltCircleLeft} size="1x" />
             </div>
             <h1>{pattern.title}</h1>
 
@@ -244,9 +252,9 @@ const Pattern = () => {
                 )}
                 <button onClick={() => handleTrack(pattern.id)}>Track</button>
             </div>
-
         </div>
     );
 };
 
-export default Pattern
+export default Pattern;
+

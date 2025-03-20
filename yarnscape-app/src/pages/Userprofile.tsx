@@ -334,6 +334,11 @@ const Userprofile = () => {
         }
     };
 
+    const handleViewPattern = (patternId: string) => {
+        // Navigate to the pattern detail page. Modify the URL as per your route structure.
+        navigate(`/pattern/${patternId}`);
+    };
+
 
     return (
         <div className="profile-container">
@@ -428,26 +433,33 @@ const Userprofile = () => {
                     </div>
                 </div>
 
-                <div className="saved-patterns">
-                    <h2>Saved patterns: </h2>
-                    <div className="savedPatterns-container">
-                        {savedPatterns.length > 0 ? (
-                            <ul>
-                                {savedPatterns.map((pattern) => (
-                                    <li key={pattern.id}>
-                                        <div className="savedPattern-item">
-                                            <span>{pattern.title}</span>
-                                            <div className="savedPattern-actions">
-                                                <button onClick={() => handleTrackPattern(pattern.id)}>Track</button>
-                                                <button onClick={() => handleUnsavePattern(pattern.id)}>Unsave</button>
-                                                <button>View</button>
-                                            </div>
-                                        </div>
-                                    </li>
-                                ))}
-                            </ul>
+                <div className="my-patterns">
+                    <h2>Saved Patterns: </h2>
+                    <div className="myPatterns-container">
+                        {loading ? (
+                            <p>Loading...</p>
                         ) : (
-                            <p>No saved patterns.</p>
+                        <div className="myPatterns-column">
+                            {savedPatterns.length > 0 ? (
+                                <ul>
+                                    {savedPatterns.map((pattern) => (
+                                        <li key={pattern.id}>
+                                            <div className="myPatterns-item">
+                                                <span>{pattern.title}</span>
+                                                <div className="myPatterns-columnbtns">
+                                                    {/* Track, Unsave, and View buttons */}
+                                                    <button onClick={() => handleTrackPattern(pattern.id)}>Track</button>
+                                                    <button onClick={() => handleUnsavePattern(pattern.id)}>Unsave</button>
+                                                    <button onClick={() => handleViewPattern(pattern.id)}>View</button>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p>No saved patterns.</p>
+                            )}
+                        </div>
                         )}
                     </div>
                 </div>
