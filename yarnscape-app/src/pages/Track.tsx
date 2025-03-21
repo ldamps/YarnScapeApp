@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { collection, query, where, getDocs, updateDoc, doc, getFirestore } from 'firebase/firestore';
 import './styles.css'
 
+// Interface to represent the projects
 interface TrackingProject {
     id: string;
     title: string;
@@ -21,6 +22,7 @@ const Track = () => {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
+    // To fetch the user's tracked projects
     useEffect(() => {
         if (user) {
             const fetchTrackingProjects = async () => {
@@ -44,10 +46,12 @@ const Track = () => {
         }
     }, [db, user]);
 
+    // navigate to tracking when 'track' button is pressed
     const handleTrackProjectClick = (projectId: string) => {
         navigate(`/tracking/${projectId}`); // Redirect to the specific project track page
     };
 
+    // Function to mark the projet as completed
     const handleClearProject = async (projectId: string) => {
         try {
             // Update the project as completed
@@ -57,14 +61,12 @@ const Track = () => {
                 lastEdited: new Date(), // Set last edited to current date
             });
 
-            // Update the UI
+            // Update the UI so that it shows it is completed
             setTrackingProjects((prevProjects) =>
                 prevProjects.map((project) =>
                     project.id === projectId ? { ...project, completed: true, lastEdited: new Date().toISOString() } : project
                 )
             );
-
-            alert('Project marked as completed!');
         } catch (error) {
             console.error('Error marking project as completed:', error);
             alert('There was an error completing the project.');
@@ -77,7 +79,6 @@ const Track = () => {
     const handleTabChange = (tab: string) => {
         setCurrentTab(tab); // Update the active tab
     };
-
 
     return (
         <div className="track-container">
