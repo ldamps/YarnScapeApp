@@ -122,140 +122,152 @@ Login + Signup styles */
 .signin-container {
     display: flex;
     justify-content: center;
-    align-items: center;
-    width: 85%;
-    max-width: 500px;
-    padding: 20px;
-    background-color: var(--c-background-primary);
-    font-size: var(--text-size);
-    border-radius: 8px;
     flex-direction: column;
-    margin-left: 10%;
-    margin-right: 10%;
-    margin-top: 50%;
-    margin-bottom: 50%;
+    align-items: center;
+    height: 100vh;
+    padding: 0 20px;
+    background-color: var(--c-background);
 }
 
 .login-section {
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px;
-}
-
-.login-section-header {
+    max-width: 400px;
+    background-color: var(--c-background-primary);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
-    margin-bottom:15px;
-    width: 100%;
+    color: var(--c-text-primary);
 }
 
 .login-section-header h3 {
-    font-size: 23.5px;
+    font-size: var(--text-headersize);
+    color: var(--c-text-primary);
+    margin-bottom: 20px;
 }
 
 .login-section-input {
-    width: 100%;
-    margin-top: 15px;
-    margin-bottom: 10px;
-}
-
-.login-section-input input {
-    width: 100%;
-    padding: 20px;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    outline: none;
-    font-size: var(--text-size-input);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
     color: var(--c-text-primary);
-    border-color: var(--c-text-primary);
 }
 
 .login-section-input input:focus {
     background-color: var(--c-background-inputfocus);
+    border-color: var(--c-text-primary);
+    color: var(--c-text-primary)
 }
 
-.login-section-submitbtn {
+.login-section-input input {
+    padding: 12px;
+    font-size: var(--text-size-input);
+    border: 1px solid #ddd;
+    border-radius: 6px;
     width: 100%;
+    box-sizing: border-box;
+    color: var(--c-text-primary)
 }
 
 .login-section-submitbtn button {
-    width: 100%;
-    padding-left: 20px;
-    /*padding-right: 20px;*/
-    padding: 12px;
-    font-weight: bold;
-    background-color: var(--c-background);
+    padding: 15px;
+    font-size: var(--text-size);
     color: var(--c-text-primary);
-    font-size: var(--text-subheadingsize-1);
-    border: 2px;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
-}
-
-.login-section-submitbtn button:hover {
-    background-color: var(--c-background-hover);
+    background-color: var(--c-background-button);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
 }
 
 .signin-error-message {
     color: red;
+    font-size: var(--text-size-input);
+    margin-top: 10px;
+}
+
+.yes-no-account1 p {
     font-size: var(--text-size);
-    text-align: center;
-    margin-top: 20px;
-}
-
-.yes-no-account {
-    margin-top: 20px;
-    text-align: center;
-    font-size: var(--text-size-input);
-    width: 100%;
-}
-
-.yes-no-account1 {
-    margin-top: 20px;
-    text-align: center;
-    font-size: var(--text-size-input);
-    width:100%;
-}
-
-/* Style for the entire label */
-.termsCheckbox {
-    display: flex;
-    align-items: center;  /* Aligns items (checkbox and text) vertically in the center */
-    font-size: var(--text-size-input);
     color: var(--c-text-primary);
-    margin-bottom: 20px;
-    padding-left: 5px;
+    margin-top: 20px;
 }
 
-/* Style for the checkbox input */
-.termsCheckbox input[type="checkbox"] {
-    margin-right: 5px;
-    width: 20px;
-    height: 20px;
-    border-radius: 4px;
-}
-
-/* Hover effect for the checkbox */
-.termsCheckbox input[type="checkbox"]:hover {
-    transform: scale(1.1);
-    transition: transform 0.2s;
-}
-
-/* Style for the link (Terms and Conditions) */
-.termsCheckbox .terms-link {
-    color: var(--c-text-primary);
-    text-decoration: none;
-    transition: color 0.2s;
-}
-
-/* Change the link color when hovered */
-.termsCheckbox .terms-link:hover {
+.yes-no-account1 span {
     color: var(--c-text-primary);
     text-decoration: underline;
 }
 
+/* Media Queries for mobile responsiveness */
+@media (max-width: 480px) {
+    .signin-container {
+        padding: 0 15px;
+    }
+
+    .login-section {
+        padding: 15px;
+    }
+
+    .login-section-header h3 {
+        font-size: var(--text-headersize);
+    }
+
+    .login-section-input input {
+        padding: 10px;
+        font-size: var(--text-size-input);
+    }
+
+    .login-section-submitbtn button {
+        font-size: var(--text-size);
+        padding: 12px;
+    }
+
+    .signin-error-message {
+        font-size: var(--text-size-input);
+    }
+
+    .yes-no-account1 p {
+        font-size: var(--text-size);
+        margin-top: 15px;
+    }
+}
+
+/* sign-up */
+.termsCheckbox {
+    display: flex;
+    align-items: left;
+    justify-content: left;
+    gap: 10px;
+}
+
+.termsCheckbox label {
+    font-size: var(--text-size);
+    color: var(--text-size);
+    gap: 5px;
+}
+
+.termsCheckbox input {
+    transform: scale(1.2);
+}
+
+.yes-no-account p {
+    font-size: var(--text-size);
+    color: var(--c-text-primary);
+    margin-top: 20px;
+}
+
+.yes-no-account span {
+    color: var(--c-text-primary);
+    text-decoration: underline;
+}
+
+/* Media Queries for mobile responsiveness */
+@media (max-width: 480px) {
+    .yes-no-account p {
+        font-size: var(--text-size);
+        margin-top: 15px;
+    }
+}
 
 /*---------------------------------------------------
 Homepage styles */

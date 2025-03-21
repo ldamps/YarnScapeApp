@@ -27,23 +27,17 @@ const Signup = () => {
     const validationError = validatePasswordStrength(password);
     const signUpWithEmail = async () => {
 
+        // validating the password
         if (validationError) {
-            setError(validationError);
+            setError(validationError); // checks that the password consists of uppercase, lowercase, a symbol, a number and is atleast length 8
             return;
-        } else if (password !== confirmPassword) {
+        } else if (password !== confirmPassword) { // checks that the password and confirm password are the same
             setError('Passwords do not match');
             return;
-        } else if (!isChecked) {
+        } else if (!isChecked) { // checks that the user has agreed to the terms and conditiions of YarnScape
             setError('Please agree to the terms and conditions in order to create your YarnScape account.');
             return;
         }
-
-        /*
-        // Check if passwords match
-        if (password !== confirmPassword) {
-            setError('Passwords do not match');
-            return;
-        }*/
 
         setAuthing(true);
         setError('');
@@ -60,6 +54,11 @@ const Signup = () => {
                 setAuthing(false);
             });
     };
+
+    // To navigate to the login page
+    const goLogin = () => {
+        navigate('/login')
+    }
 
     return (
         <div className='signin-container'>
@@ -96,7 +95,7 @@ const Signup = () => {
             </div>
 
             <div className='yes-no-account'>
-                <p>Got an account? <span><a href='/login'>Log In</a></span></p>
+                <p>Have an account? <span onClick={goLogin}>Login</span></p>
             </div>
         </div>
     );

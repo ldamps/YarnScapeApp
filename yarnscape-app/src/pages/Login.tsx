@@ -33,6 +33,11 @@ const Login = () => {
             });
     }
 
+    // To navigate to the sign-up page
+    const goSignUp = () => {
+        navigate('/signup')
+    }
+
     return (
         <div className='signin-container'>
             <div className='login-section'>
@@ -70,7 +75,7 @@ const Login = () => {
             </div>
 
             <div className='yes-no-account1'>
-                <p>Don't have an account? <span><a href='/signup'>Sign Up</a></span></p>
+                <p>Don't have an account? <span onClick={goSignUp}>Sign up</span></p>
             </div>
         </div>
     );
