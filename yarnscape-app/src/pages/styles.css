@@ -2294,6 +2294,36 @@ span {
     z-index: 1000;
 }
 
+/* Responsive styles for smaller screens */
+@media (max-width: 600px) {
+    .inventory-header h1 {
+        font-size: var(--text-headersize);
+    }
+
+    .tools-inventory, .yarn-inventory {
+        max-width: 100%;
+        padding: 10px;
+    }
+
+    .tool-inventory ul, .yarn ul {
+        padding: 0;
+    }
+
+    .tool-inventory li, .yarn li {
+        font-size: var(--text-size); /* Adjust font size for better mobile readability */
+        padding: 8px;
+    }
+
+    button {
+        padding: 10px 15px;
+        font-size: var(--text-size);
+    }
+
+    .quantity {
+        gap: 5px;
+    }
+}
+
 /* Modal Content */
 .modal-content {
     background-color: var(--c-background-primary);
