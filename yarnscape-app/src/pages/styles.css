@@ -233,25 +233,25 @@ Login + Signup styles */
 }
 
 /* sign-up */
-termsCheckbox {
+.termsCheckbox {
     display: flex;
-    align-items: center; /* Vertically align the checkbox and label */
-    justify-content: flex-start; /* Ensure left alignment */
-    width: 100%; /* Ensures the checkbox stays within the container width */
-    margin-top: 15px; /* Adds spacing above the checkbox for separation */
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    margin-top: 15px;
 }
 
 .termsCheckbox input {
-    margin-right: 10px; /* Space between checkbox and label */
-    transform: scale(1.2); /* Scale the checkbox to make it larger */
+    margin-right: 10px;
+    transform: scale(1.2);
 }
 
 .termsCheckbox label {
     font-size: var(--text-size);
-    color: var(--text-color); /* Ensure the text color is correctly applied */
-    display: inline-block; /* Ensures label stays inline with checkbox */
-    width: calc(100% - 35px); /* Ensures the label takes the rest of the space */
-    word-wrap: break-word; /* Allows long text to wrap on smaller screens */
+    color: var(--text-color);
+    display: inline-block;
+    width: calc(100% - 35px);
+    word-wrap: break-word;
 }
 
 .yes-no-account p {

@@ -76,13 +76,16 @@ const Signup = () => {
 
                     <input type='password' placeholder='Re-Enter Password' value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
 
-                    <div className="termsCheckbox">
-                        <label>
-                            <input type="checkbox" checked={isChecked} onChange={handleCheckboxChange} />
-                        I agree to the <a href='/termsconditions'>Terms and Conditions</a>
-                        </label>
-                    </div>
+                    
                 </div>
+
+                <div className="termsCheckbox">
+                    <label>
+                        <input type="checkbox" checked={isChecked} onChange={handleCheckboxChange} />
+                        I agree to the <a href='/termsconditions'>Terms and Conditions</a>
+                    </label>
+                </div>
+
 
                 <div className='login-section-submitbtn'>
                     <button onClick={signUpWithEmail} disabled={authing}>Create
