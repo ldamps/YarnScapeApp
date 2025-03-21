@@ -9,12 +9,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowAltCircleLeft } from '@fortawesome/free-solid-svg-icons';
 import { getFirestore, collection, query, where, getDocs, addDoc, updateDoc, doc, deleteDoc, getDoc, setDoc } from 'firebase/firestore';
 
+// Interface to represent sections
 interface Section {
     title: string;
     instructions: string;
     photoUrl?: string; // Optional photo URL
 }
 
+// Interface to represent the current pattern
 interface thisPattern {
     id: string;
     title: string;
@@ -36,12 +38,15 @@ const Pattern = () => {
     const [isSaved, setIsSaved] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
+    // navigate back to the previous page
     const handleGoBack = () => {
         navigate(-1);
     };
 
     useEffect(() => {
+        // get the current pattern which is being displayed
         if (!patternId) {
+            // make sure a patternid has been parsed
             setError('Pattern ID is missing.');
             setLoading(false);
             return;
@@ -83,9 +88,11 @@ const Pattern = () => {
                     }
                 } else {
                     setError('Pattern not found.');
+                    console.log(error);
                 }
             } catch (err) {
                 setError('Error fetching pattern details.');
+                console.log(error);
             } finally {
                 setLoading(false);
             }
@@ -96,10 +103,11 @@ const Pattern = () => {
         }
     }, [patternId]);
 
+    // function to save the pattern
     const handleSavePattern = async () => {
         if (user && pattern) {
             const savedPatternRef = doc(db, 'saved-patterns', `${user.uid}-${pattern.id}`);
-            await setDoc(savedPatternRef, {
+            await setDoc(savedPatternRef, { // copy the entire pattern to 'saved-patterns'
                 userId: user.uid,
                 patternId: pattern.id,
                 title: pattern.title,
@@ -114,14 +122,16 @@ const Pattern = () => {
         }
     };
 
+    // function to unsave the pattern
     const handleUnsavePattern = async () => {
-        if (user && pattern) {
+        if (user && pattern) { // delete the pattern from 'saved-patterns'
             const savedPatternRef = doc(db, 'saved-patterns', `${user.uid}-${pattern.id}`);
             await deleteDoc(savedPatternRef); // Remove saved pattern
             setIsSaved(false); // Mark as unsaved after removing
         }
     };
 
+    // function to go and track the pattern
     const handleTrack = async (patternId: string) => {
         if (!user) {
             alert('Please log in to track patterns.');
@@ -193,6 +203,7 @@ const Pattern = () => {
 
     return (
         <div className="pattern-details-container">
+            <div className="pattern-details">
             <div className="back-icon" onClick={handleGoBack}>
                 <FontAwesomeIcon icon={faArrowAltCircleLeft} size="1x" />
             </div>
@@ -251,6 +262,7 @@ const Pattern = () => {
                     <button onClick={handleUnsavePattern}>Unsave Pattern</button>
                 )}
                 <button onClick={() => handleTrack(pattern.id)}>Track</button>
+            </div>
             </div>
         </div>
     );

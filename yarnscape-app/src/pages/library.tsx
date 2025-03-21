@@ -7,6 +7,7 @@ import { getAuth } from 'firebase/auth';
 import { collection, query, getDocs, where, deleteDoc, addDoc } from 'firebase/firestore';
 import './styles.css';
 
+// interface to represent patterns
 interface Pattern {
     id: string;
     title: string;
@@ -32,8 +33,8 @@ const Library = () => {
     const [filteredPatterns, setFilteredPatterns] = useState<Pattern[]>(patterns); // Patterns after applying search/filter
     const [savedPatterns, setSavedPatterns] = useState<Set<string>>(new Set()); // Track saved patterns by ID
     
-
     useEffect(() => {
+        // fetch patterns from published-patterns which aren't the user's own pattern
         const fetchPatterns = async () => {
             try {
                 // Query to get published patterns excluding the current user's patterns
@@ -61,13 +62,13 @@ const Library = () => {
                 console.error('Error fetching patterns:', error);
             }
         };
-
         fetchPatterns();
     }, [user?.uid]); // Only run when the user's ID changes
 
     useEffect(() => {
         // Apply search and filter every time a search/filter changes
         const filtered = patterns.filter((pattern) => {
+            // search by pattern title or pattern author
             const matchesSearchQuery =
                 pattern.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 pattern.author.toLowerCase().includes(searchQuery.toLowerCase());
@@ -82,6 +83,7 @@ const Library = () => {
     }, [searchQuery, selectedType, selectedSkillLevel, patterns]);
 
     useEffect(() => {
+        // fetch the patterns that the signed in user has saved
         const fetchSavedPatterns = async () => {
             if (user?.uid) {
                 try {
@@ -98,10 +100,10 @@ const Library = () => {
                 }
             }
         };
-
         fetchSavedPatterns();
     }, [user?.uid]); // Fetch saved patterns when user changes
 
+    // for the bottom nav
     const [currentTab, setCurrentTab] = useState('library');
     
     const handleTabChange = (tab: string) => {

@@ -8,6 +8,7 @@ import { getFirestore, collection, query, where, getDocs, addDoc, updateDoc, doc
 import AddYarnModal from '../components/addYarn';
 import AddToolModal from '../components/addTool';
 
+// interface to represent tools
 interface Tool {
     id: string;
     toolName: string;
@@ -15,6 +16,7 @@ interface Tool {
     quantity: number;
 }
 
+// interface to represent yarn
 interface Yarn {
     id: string;
     yarnName: string;
@@ -34,7 +36,7 @@ const Inventory = () => {
 
     const user = auth.currentUser; // the current signed in user
     
-    // fetch the user's yarn inventory from firestore
+    // fetch the user's tool + yarn inventory from firestore
     useEffect(() => {
         if (user) {
             const fetchYarnInventory = async () => {
@@ -89,7 +91,7 @@ const Inventory = () => {
         try {
             await updateDoc(yarnDocRef, { quantity: newQuantity });
 
-            // Update local state
+            // Update local state of yarn to the new quantity
             setYarnInventory(prevInventory =>
                 prevInventory.map(yarn =>
                     yarn.id === id ? { ...yarn, quantity: newQuantity } : yarn
@@ -116,6 +118,7 @@ const Inventory = () => {
         try {
             await updateDoc(toolDocRef, { quantity: newQuantity });
 
+            // update the local state of tools to the new quantity
             setToolInventory(prevInventory =>
                 prevInventory.map(tool =>
                     tool.id === id ? { ...tool, quantity: newQuantity} : tool
@@ -125,7 +128,6 @@ const Inventory = () => {
             console.error('Error updating quantity:', error)
         }
     };
-
 
     // For the bottom navbar
     const [currentTab, setCurrentTab] = useState('inventory');

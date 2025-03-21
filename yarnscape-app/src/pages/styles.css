@@ -466,117 +466,137 @@ User profile styles */
 }
 
 /* my patterns section: */
-.myPatterns-container {
-    padding: 20px;
-    padding-bottom: 5%;
-    background-color: var(--c-background-secondary);
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
-    margin: 20px auto;
+.pattern-details-container {
+    padding: 15px;
+    font-family: Arial, sans-serif;
 }
 
-.myPatterns-column {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.myPatterns-column ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-}
-
-.myPatterns-item {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    background-color: var(--c-background-primary);
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-.myPatterns-item span {
-    font-size: var(--text-size);
-    font-weight: bold;
-    color: var(--c-text-primary);
-    text-align: left;
-}
-
-.myPatterns-columnbtns {
-    display: flex;
-    gap: 15px;
-    justify-content: center;
-    align-items: center;
-}
-
-.myPatterns-columnbtns button {
-    padding: 10px 15px;
-    font-size: var(--text-size-input);
-    font-weight: bold;
-    border: none;
-    border-radius: 4px;
+/* Back icon */
+.back-icon {
     cursor: pointer;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
 }
 
-.myPatterns-columnbtns button:first-child {
-    background-color: var(--c-background-button);
-    color: var(--text-size-input);
-    font-size: var(--text-size-input);
-}
-
-.myPatterns-columnbtns button:nth-child(2) {
-    background-color: var(--c-background-button);
-    color: var(--c-text-primary);
-    font-size: var(--text-size-input);
-}
-
-.myPatterns-columnbtns button:nth-child(3) {
-    background-color: var(--c-background-button);
-    color: var(--c-text-primary);
-    font-size: var(--text-size-input);
-}
-
-.myPatterns-container p {
-    text-align: center;
-    font-size: var(--text-size);
-    color: var(--c-text-primary);
-    font-weight: bold;
-}
-
-.myPatterns-container p:last-child {
-    font-size: var(--text-size);
-    color: var(--c-text-primary);
+/* Title styling */
+h1 {
+    font-size: 24px;
+    margin-bottom: 15px;
     text-align: center;
 }
 
-/* badges section: */
-.badges-list {
+/* Pattern facts (Type, Skill Level) */
+.pattern-facts p {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+/* Pattern sections */
+.pattern-sections {
+    margin-bottom: 20px;
+}
+
+.pattern-sections h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.pattern-sections .section {
+    margin-bottom: 20px;
+}
+
+.pattern-sections .section h3 {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+/* Instructions formatting */
+.pattern-sections .section p {
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+/* Section photo styling */
+.section-photo {
+    width: 100%;
+    height: auto;
+    margin-top: 10px;
+    border-radius: 8px;
+}
+
+/* Material and tag list styling */
+.pattern-material, .pattern-tags {
+    margin-bottom: 20px;
+}
+
+.pattern-material h2, .pattern-tags h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.pattern-material ul, .pattern-tags ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.pattern-material li, .pattern-tags li {
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+/* Buttons styling */
+.pattern-buttons {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
 }
 
-.badge {
-    background-color: var(--c-background-hover);
-    color: var(--c-text-primary);
-    font-size: 1rem;
-    padding: 8px 12px;
-    border-radius: 25px;
-    text-align: center;
-    display: inline-block;
-    font-weight: bold;
-    transition: transform 0.3s ease, background-color 0.3s ease;
+.pattern-buttons button {
+    padding: 10px 20px;
+    font-size: 16px;
+    margin: 5px 0;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    width: 100%;
+    max-width: 300px; /* Limit button size */
 }
 
-.badges-list p {
-    font-size: var(--text-size-input);
-    color: var(--c-text-primary);
+.pattern-buttons button:hover {
+    background-color: #0056b3;
 }
 
+/* Responsive adjustments for small screens (e.g., iPhone 11) */
+@media screen and (max-width: 768px) {
+    /* Adjust layout for smaller screens */
+    .pattern-details-container {
+        padding: 10px;
+    }
+
+    .pattern-facts p, .pattern-sections .section h3, .pattern-material li, .pattern-tags li {
+        font-size: 14px; /* Slightly smaller font for better readability */
+    }
+
+    .pattern-buttons button {
+        font-size: 14px;
+    }
+
+    .section-photo {
+        width: 100%;
+        height: auto;
+    }
+
+    /* Ensure headings have appropriate margins */
+    h1, h2 {
+        font-size: 20px;
+        margin: 15px 0;
+    }
+}
 
 /*---------------------------------------------------
 Settings styles */
@@ -1968,7 +1988,7 @@ h1 {
     text-align: center;
     margin-bottom: 30px;
     color: var(--c-text-primary);
-    font-size: var(--text-header1size);
+    font-size: var(--text-headersize);
 }
 
 /* Search Bar */
@@ -2105,108 +2125,144 @@ h1 {
 /*---------------------------------------------------
 Pattern styles */
 .pattern-details-container {
+    width: 100%;
     padding: 20px;
-    font-family: Arial, sans-serif;
+    box-sizing: border-box;
+    background-color: var(--c-background);
+}
+
+.pattern-details {
+    width: 100%;
+    padding: 25px;
+    max-width: 1200px;
+    background-color: var(--c-background-primary);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     margin: 0 auto;
 }
 
 .back-icon {
     cursor: pointer;
-    margin-right: 10px;
-    display: inline-flex;
-    align-items: center;
+    margin-bottom: 20px;
+    color: var(--c-text-primary)
 }
 
 h1 {
-    display: inline;
     font-size: var(--text-headersize);
+    color: var(--c-text-primary);
+    margin-bottom: 10px;
+    text-align: center;
     font-weight: bold;
-    text-decoration: underline;
 }
 
 .pattern-facts p {
-    font-size: var(--text-size-input);
-    margin-bottom: 5px;
-    margin-top: 5px;
-}
-
-.pattern-sections, .pattern-material, .pattern-tags {
-    margin-top: 20px;
-}
-
-h2 {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-}
-
-.section {
-    border: 2px solid #ccc;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
-    background-color: var(--c-background-primary);
-}
-
-.section:nth-child(odd) {
-    border-color: var(--c-text-primary);
-    background-color: var(--c-background-primary);
-}
-
-.section:nth-child(even) {
-    border-color: var(--c-text-primary);
-    background-color: var(--c-background-primary);
-}
-
-.pattern-sections h3 {
-    font-size: var(--text-subheadersize);
-    margin-bottom: 10px;
-    text-decoration: underline;
-}
-
-.pattern-sections p {
+    margin: 5px 0;
     font-size: var(--text-size);
+    color: var(--c-text-primary);
+}
+
+h2, .pattern-material h2, .pattern-tags h2 {
+    font-size: var(--text-subheadersize);
+    color: var(--c-text-primary);
+    margin-bottom: 10px;
+    border-bottom: 2px solid var(--c-text-primary);
+    padding-bottom: 5px;
+}
+
+.pattern-sections .section {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    background-color: var(--c-background-primary);
+}
+
+.pattern-sections .section h3 {
+    font-size: var(--text-size);
+    color: var(--c-text-primary);
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+}
+
+.pattern-sections .section p {
+    font-size: var(--text-size);
+    line-height: 1.6;
+    color: var(--c-text-primary);
+    margin: 5px 0;
 }
 
 .section-photo {
-    max-width: 100%;
+    width: 100%;
     height: auto;
+    border-radius: 5px;
     margin-top: 10px;
-    justify-content: center;
-    justify-items: center;
 }
 
-.pattern-material ul,
-.pattern-tags ul {
+/* Material Section */
+.pattern-material ul, .pattern-tags ul {
     list-style-type: none;
     padding-left: 0;
 }
 
-.pattern-material h2, .pattern-tags h2 {
-    font-size: var(--text-subheadersize);
-}
-
-.pattern-material li,
-.pattern-tags li {
+.pattern-material li, .pattern-tags li {
     font-size: var(--text-size);
-}
-
-.pattern-buttons {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column; /* Stack the buttons vertically */
-    gap: 15px; /* Space between the buttons */
-}
-
-button {
-    padding: 10px 15px;
-    background-color: var(--c-background-button);
     color: var(--c-text-primary);
+    margin: 5px 0;
+}
+
+/* Buttons Section */
+.pattern-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.pattern-buttons button {
+    padding: 12px;
+    background-color: var(--c-background-button);
+    color:var(--c-text-primary);
     border: none;
     border-radius: 5px;
-    cursor: pointer;
-    font-size: var(--text-size-input);
-    font-weight: bold;
-    width: 100%; /* Make the buttons full width */
+    font-size: 1rem;
+    transition: background-color 0.3s;
+    width: 100%; /* Make buttons take up the full width */
+}
+
+/* Responsive Design for Mobile Devices */
+@media (max-width: 768px) {
+    .pattern-details-container {
+        padding: 15px;
+    }
+
+    .pattern-details {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: var(--text-headersize);
+        text-align: left; /* Align title left for mobile */
+    }
+
+    h2, h3 {
+        font-size: var(--text-size);
+    }
+
+    .pattern-buttons button {
+        padding: 10px;
+        font-size: var(--text-size);
+    }
+
+    .pattern-facts p, .pattern-material li, .pattern-tags li {
+        font-size: var(--text-size);
+    }
+
+    /* Adjust image size for mobile */
+    .section-photo {
+        width: 100%;
+        height: auto;
+    }
 }
 
 /*---------------------------------------------------
