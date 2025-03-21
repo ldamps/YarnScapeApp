@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faArrowAltCircleLeft } from '@fortawesome/free-solid-svg-icons';
 import { getAuth, signOut } from 'firebase/auth';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { db } from '../main';
 import ColorPref from '../preferences/colourPref';
 import TextPref from '../preferences/textPref';
 import './styles.css'
@@ -29,17 +31,44 @@ const Settings = () => {
     }
 
     const [userEmail, setUserEmail] = useState<string | null>(null); // consts for the user's email
+    const [notificationsEnabled, setNotificationsEnabled] = useState<boolean>(false);
 
-    // Get the current users email
+    // Get the current users email and notification preferences
     useEffect(() => {
         const auth = getAuth();
         const user = auth.currentUser;
     
         if (user) {
-          setUserEmail(user.email); // Get the email if the user is signed in
-        }
-    }, []);
+            setUserEmail(user.email); // Get the email if the user is signed in
 
+            // Fetch notification preference from Firestore
+            const fetchNotificationPref = async () => {
+                const docRef = doc(db, 'users', user.uid);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    setNotificationsEnabled(data.notificationsEnabled || false);
+                }
+            };
+            fetchNotificationPref();
+        }
+    }, [auth.currentUser]);
+
+    // Function to save notification preferences to Firebase
+    const saveNotificationPreferences = async (enabled: boolean) => {
+        const user = auth.currentUser;
+        if (user) {
+            const docRef = doc(db, 'users', user.uid);
+            await setDoc(docRef, { notificationsEnabled: enabled }, { merge: true });
+        }
+    };
+
+    // Function to handle notification toggle
+    const handleNotificationToggle = async () => {
+        const newNotificationSetting = !notificationsEnabled;
+        setNotificationsEnabled(newNotificationSetting);
+        await saveNotificationPreferences(newNotificationSetting);
+    };
 
     // Function to sign the current user out and navigate them to the login page
     const handleSignout = async () => {
@@ -78,6 +107,15 @@ const Settings = () => {
                 {/* Enable/disable notifications */}
                 <div className="notification-preference">
                     <h3>Notifications: </h3>
+                    <label className="switch">
+                        <input
+                            type="checkbox"
+                            checked={notificationsEnabled}
+                            onChange={handleNotificationToggle}
+                        />
+                        <span className="slider round"></span>
+                    </label>
+                    <span>{notificationsEnabled ? "Enabled" : "Disabled"}</span>
                 </div>
 
                 {/* Personal details */}

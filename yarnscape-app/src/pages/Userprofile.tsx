@@ -31,7 +31,7 @@ const Userprofile = () => {
     const [trackingProjects, setTrackingProjects] = useState<TrackingProject[]>([]);
     const [savedPatterns, setSavedPatterns] = useState<Pattern[]>([]);
     const [loadingTracking, setLoadingTracking] = useState(true);
-    const [badges, setBadges] = useState<string[]>([]);
+
 
     const navigate = useNavigate();
     const navigateToSettings = () => {
@@ -58,7 +58,6 @@ const Userprofile = () => {
             });
             setMyPatterns(myPatternList);
             setLoading(false);
-            checkBadges(myPatternList);
             };
         fetchMyPatterns();
         }
@@ -82,7 +81,6 @@ const Userprofile = () => {
                 });
                 setTrackingProjects(trackingProjectList);
                 setLoadingTracking(false);
-                checkBadges(trackingProjectList);
             };
             fetchTrackingProjects();
         }
@@ -110,30 +108,6 @@ const Userprofile = () => {
             fetchSavedPatterns();
         }
     }, [user, db]);
-
-    // Check for badges earned based on specific conditions
-    const checkBadges = (patternsOrProjects: Pattern[] | TrackingProject[]) => {
-        const earnedBadges: string[] = [];
-        
-        // Badge 1: Earn "First Product" badge if the user has created at least one pattern.
-        if (myPatterns.length > 0) {
-            earnedBadges.push('Created Your First Pattern!');
-        }
-
-        // Badge 2: Earn "Project Completion" badge if the user has completed at least 5 projects.
-        const completedProjects = trackingProjects.filter((project) => project.completed);
-        if (completedProjects.length >= 5) {
-            earnedBadges.push('Project Prodigy!');
-        }
-
-        // Badge 3: Earn "Pattern Creator" badge if the user has created 10+ patterns.
-        if (myPatterns.length >= 10) {
-            earnedBadges.push('Master Creator!');
-        }
-
-        setBadges(earnedBadges);
-    };
-
 
     // For the bottom navbar
     const [currentTab, setCurrentTab] = useState('userprofile');
@@ -379,16 +353,8 @@ const Userprofile = () => {
 
             <div className="profile-body">
                 <div className="badges-section">
-                    <h3>Badges:</h3>
-                    <div className="badges-list">
-                        {badges.length > 0 ? (
-                            badges.map((badge, index) => (
-                                <span key={index} className="badge">{badge}</span>
-                            ))
-                        ) : (
-                            <p>No badges earned yet.</p>
-                        )}
-                    </div>
+                    <h2>Badges:</h2>
+                    
                 </div>
                 <div className="my-projects">
                     <h2>My Projects: </h2>
