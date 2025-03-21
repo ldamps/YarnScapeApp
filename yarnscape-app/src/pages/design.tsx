@@ -7,6 +7,7 @@ import { getAuth } from 'firebase/auth';
 import { db } from '../main';
 import { getFirestore, collection, query, where, getDocs, addDoc, updateDoc, doc, deleteDoc, getDoc } from 'firebase/firestore';
 
+// Interface to represent patterns
 interface Pattern {
     id: string;
     title: string;
@@ -21,7 +22,7 @@ const Design = () => {
     const [completedPatterns, setCompletedPatterns] = useState<string[]>([]); // Keep track of completed patterns
 
     const navigate = useNavigate();
-    const navigateToCreate = () => {
+    const navigateToCreate = () => { // to navigate to the create page
         navigate('/create');
     };
 
@@ -67,6 +68,7 @@ const Design = () => {
         navigate(`/edit/${patternId}`); // Navigate to the edit page with the pattern ID
     };
 
+    // function to go track a pattern
     const handleTrack = async (patternId: string) => {
         if (!user) {
             alert('Please log in to track patterns.');
@@ -130,12 +132,14 @@ const Design = () => {
         }
     };
 
+    // Function to unpublish a pattern
     const handleUnpublish = async (patternId: string) => {
         try {
+            // delete the pattern form 'published-patterns'
             const publishedPatternRef = doc(db, 'published-patterns', patternId);
             await deleteDoc(publishedPatternRef);
             
-
+            // update the pattern in 'my-patterns' so that published=false
             const myPatternRef = doc(db, 'my-patterns', patternId);
             await updateDoc(myPatternRef, {
                 published: false,
@@ -152,6 +156,7 @@ const Design = () => {
         }
     };
 
+    // For the bottom navbar
     const [currentTab, setCurrentTab] = useState('design');
 
     const handleTabChange = (tab: string) => {
@@ -167,7 +172,7 @@ const Design = () => {
             <div className="design-body">
                 <button className="createPattern-button" onClick={navigateToCreate}>+ Create new pattern</button>
 
-                <h3>My patterns: </h3>
+                <h4>My patterns: </h4>
                 {loading ? (
                     <p>Loading...</p>
                 ) : (

@@ -1061,98 +1061,134 @@ Terms and Conditions styles */
 
 /*---------------------------------------------------
 Pattern Design styles */
-
 .design-container {
-    padding: 20px;
-}
-
-.design-header {
-    text-align: center;
-    margin-bottom: 30px;
-    font-size: var(--text-headersize);
-    color: var(--c-text-primary);
-}
-
-.design-body {
-    padding: 20px;
-    background-color: var(--c-background-primary);
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.design-body .createPattern-button {
     width: 100%;
-    background-color: var(--c-background-button);
-    color: var(--c-text-primary);
-    font-weight: bold;
-    padding: 10px 20px;
-    margin-bottom: 20px;
-    border: none;
-    font-size: var(--text-size);
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px;
 }
 
-.design-body button:hover {
-    background-color: var(--c-background-focus);
-}
-
-.design-body h3 {
-    font-size: var(--text-subheadersize);
+.design-header h1 {
+    text-align: center;
+    font-size: var(--text-headersize);
     margin-bottom: 10px;
     color: var(--c-text-primary);
 }
 
-.myPattern-column {
+.createPattern-button {
+    background-color: var(--c-background-button);
+    color: var(--c-text-primary);
+    font-size: var(--text-size);
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+}
+
+.design-body {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding-top: 2%;
-    padding-bottom: 2%;
+    align-items: center;
+}
+
+.myPattern-column {
+    width: 100%;
+    max-width: 500px;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: var(--c-background-primary);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.myPattern-column h4 {
+    font-size: var(--text-subheadersize);
+    margin-bottom: 15px;
+    color: var(--c-text-primary);
 }
 
 .myPattern-column ul {
-    list-style-type: none;
-    padding: 0;
+    list-style: none;
+    padding-left: 0;
 }
 
 .myPattern-item {
     display: flex;
-    justify-content: space-between; /* Ensures the pattern title and buttons are spaced out */
-    align-items: center; /* Vertically centers the content */
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    justify-content: space-between;
+    align-items: center;
     background-color: var(--c-background-primary);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
 }
 
-/* Style for the pattern title */
 .myPattern-item span {
     font-size: var(--text-size);
     color: var(--c-text-primary);
-    font-weight: 500;
-    flex: 1; /* Allows the title to take up available space */
+    flex: 1;
+    margin-right: 10px;
 }
 
-/* Container for the buttons to align them horizontally */
 .myPattern-columnbtns {
     display: flex;
-    gap: 10px; /* Adds space between buttons */
+    gap: 10px;
 }
 
-/* Style for the buttons */
 .myPattern-columnbtns button {
     background-color: var(--c-background-button);
     color: var(--c-text-primary);
     border: none;
-    padding: 8px 15px;
-    font-size: 14px;
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
     cursor: pointer;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s;
 }
 
-.myPattern-columnbtns button:hover {
-    background-color: var(--c-background-focus);
+.myPattern-column p {
+    text-align: center;
+    color: var(--c-text-primary);
+}
+
+@media (max-width: 375px) {
+    .design-header h1 {
+        font-size: var(--text-headersize);
+        margin-bottom: 15px;
+    }
+
+    .createPattern-button {
+        font-size: var(--text-size);
+        padding: 10px 0;
+        width: 100%;
+    }
+
+    .myPattern-column h4 {
+        font-size: var(--text-subheadersize);
+    }
+
+    .myPattern-item {
+        flex-direction: column;
+        padding: 12px;
+    }
+
+    .myPattern-item span {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+
+    .myPattern-columnbtns {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .myPattern-columnbtns button {
+        font-size: var(--text-size);
+        width: 48%;
+    }
 }
 
 /*---------------------------------------------------
@@ -1975,7 +2011,6 @@ button {
 
 /*---------------------------------------------------
 Pattern library styles */
-
 .library-container {
     width: 100%;
     max-width: 500px;
@@ -2120,6 +2155,55 @@ h1 {
     font-size: var(--text-size-input);
     font-weight: bold;
     transition: background-color 0.3s ease;
+}
+
+/* Media Queries for Mobile (iPhone 11 Screen) */
+@media (max-width: 375px) {
+    .library-container {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 1.6rem; /* Adjust header size for smaller screens */
+        margin-bottom: 20px;
+    }
+
+    .search-bar input {
+        font-size: 14px; /* Adjust input text size */
+        padding: 8px;
+    }
+
+    .filter-options {
+        flex-direction: column; /* Stack filters on top of each other for mobile */
+        align-items: stretch; /* Ensure the filters take full width */
+    }
+
+    .filter-options select {
+        width: 100%; /* Make dropdowns full width on mobile */
+        margin-bottom: 10px;
+    }
+
+    .patterns-list {
+        grid-template-columns: repeat(2, 1fr); /* Ensure two items per row */
+        gap: 15px;
+    }
+
+    .pattern-card {
+        padding: 15px; /* Adjust padding to save space */
+    }
+
+    .pattern-title {
+        font-size: 1rem; /* Adjust title font size */
+    }
+
+    .pattern-card p {
+        font-size: 0.875rem; /* Adjust text size for better readability */
+    }
+
+    .save-button {
+        font-size: 14px; /* Adjust button font size */
+        padding: 6px;
+    }
 }
 
 /*---------------------------------------------------
