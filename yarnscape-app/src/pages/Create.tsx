@@ -216,7 +216,7 @@ const Create = () => {
                 </div>
 
                 <div className="create-body-sections">
-                    <label className="sectionLabel">Sections</label>
+                    <label className="sectionLabel">Sections: </label>
                     {sections.map((section, index) => (
                         <div key={index}>
                             <div>

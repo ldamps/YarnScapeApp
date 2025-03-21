@@ -283,7 +283,7 @@ const Edit = () => {
                 </div>
 
                 <div className="edit-body-sections">
-                    <label className="edit-sectionLabel">Sections</label>
+                    <label className="edit-sectionLabel">Sections: </label>
                     {sections.map((section, index) => (
                         <div key={index}>
                             <div>
