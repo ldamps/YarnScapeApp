@@ -10,7 +10,7 @@ import './styles.css'
 interface Section {
     title: string;
     instructions: string;
-    photoUrl?: string; // Optional photo URL
+    photoUrls?: string[]; // Optional photo URL
 };
 
 interface TrackingProject {
@@ -299,7 +299,11 @@ const Tracking = () => {
                                             {instruction}
                                         </div>
                                     ))}
-                                    {section.photoUrl && <img src={section.photoUrl} alt={section.title} />}
+                                    {section.photoUrls?.map((url, photoIndex) => (
+                                            <div key={photoIndex}>
+                                                <img src={url} alt="Section photo" style={{ width: 100, height: 100 }} />
+                                            </div>
+                                        ))}
                                 </div>
                             )}
                         </div>

@@ -13,7 +13,7 @@ import { getFirestore, collection, query, where, getDocs, addDoc, updateDoc, doc
 interface Section {
     title: string;
     instructions: string;
-    photoUrl?: string; // Optional photo URL
+    photoUrls?: string[]; // Optional photo URL
 }
 
 // Interface to represent the current pattern
@@ -238,11 +238,18 @@ const Pattern = () => {
                                     <p key={lineIndex}>{line}</p>
                                 ))}
                             </div>
-                            {section.photoUrl && (
-                                <img src={`${section.photoUrl}`}
-                                    alt={section.title}
-                                    className="section-photo"
-                                />
+                            {/* Check if photoUrls is available and iterate through them */}
+                            {section.photoUrls && section.photoUrls.length > 0 && (
+                                <div className="section-photos">
+                                    {section.photoUrls.map((photoUrl, photoIndex) => (
+                                        <img
+                                            key={photoIndex}
+                                            src={photoUrl}
+                                            alt={`${section.title} photo ${photoIndex + 1}`}
+                                            className="section-photo"
+                                        />
+                                    ))}
+                                </div>
                             )}
                         </div>
                     ))}

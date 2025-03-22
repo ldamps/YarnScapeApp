@@ -2126,6 +2126,7 @@ Tracking styles */
 .pattern-photos {
     width: 100%;
     margin-bottom: 20px;
+    flex-direction: column;
 }
 
 .pattern-photos input {
@@ -2146,6 +2147,7 @@ Tracking styles */
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-direction: column;
 }
 
 .pattern-photos button {

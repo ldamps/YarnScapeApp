@@ -9,7 +9,7 @@ import axios from 'axios';
 interface Section {
     title: string;
     instructions: string;
-    photoUrl?: string; // Optional photo URL
+    photoUrls: string[]; // Now an array of photo URLs
 };
 
 interface Pattern {
@@ -30,7 +30,7 @@ const Create = () => {
     const user = auth.currentUser;
 
     const [title, setTitle] = useState<string>('');
-    const [sections, setSections] = useState<Section[]>([{ title: '', instructions: '', photoUrl: '' }]);
+    const [sections, setSections] = useState<Section[]>([{ title: '', instructions: '', photoUrls: [] }]);
     const [tags, setTags] = useState<string[]>([]);
     const [materials, setMaterials] = useState<string[]>([]);
     const [patternType, setPatternType] = useState<'crochet' | 'knitting'>('crochet');
@@ -56,7 +56,7 @@ const Create = () => {
     };
 
     const addSection = () => {
-        setSections([...sections, { title: '', instructions: '', photoUrl: '' }]);
+        setSections([...sections, { title: '', instructions: '', photoUrls: [] }]);
     };
 
     const removeSection = (index: number) => {
@@ -73,33 +73,37 @@ const Create = () => {
         setSkillLevel(level);
     };
 
-    // Handle image upload or capture
+    // Handle image upload or capture for multiple images
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, sectionIndex: number) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
+        const files = e.target.files;
+        if (!files) return;
 
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('upload_preset', 'yarnscape-images'); // Replace with your Cloudinary preset
+        const updatedSections = [...sections];
+        const newPhotoUrls: string[] = [];
 
-        try {
-            const response = await axios.post('https://api.cloudinary.com/v1_1/dm2icxasv/image/upload', formData);
-            const imageUrl = response.data.secure_url;
+        for (const file of files) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', 'yarnscape-images'); // Replace with your Cloudinary preset
 
-            // Update the section's photoUrl
-            const updatedSections = [...sections];
-            updatedSections[sectionIndex].photoUrl = imageUrl;
-            setSections(updatedSections);
-        } catch (error) {
-            console.error('Error uploading image:', error);
-            alert('Failed to upload image.');
+            try {
+                const response = await axios.post('https://api.cloudinary.com/v1_1/dm2icxasv/image/upload', formData);
+                newPhotoUrls.push(response.data.secure_url); // Push new URL into the array
+            } catch (error) {
+                console.error('Error uploading image:', error);
+                alert('Failed to upload image.');
+            }
         }
+
+        // Add the new photo URLs to the section's photoUrls
+        updatedSections[sectionIndex].photoUrls = [...updatedSections[sectionIndex].photoUrls, ...newPhotoUrls];
+        setSections(updatedSections);
     };
 
     // Handle photo removal
-    const handleRemovePhoto = (sectionIndex: number) => {
+    const handleRemovePhoto = (sectionIndex: number, photoIndex: number) => {
         const updatedSections = [...sections];
-        updatedSections[sectionIndex].photoUrl = ''; // Clear the photo URL
+        updatedSections[sectionIndex].photoUrls = updatedSections[sectionIndex].photoUrls.filter((_, i) => i !== photoIndex);
         setSections(updatedSections);
     };
 
@@ -121,7 +125,7 @@ const Create = () => {
 
             // Reset form
             setTitle('');
-            setSections([{ title: '', instructions: '', photoUrl: '' }]);
+            setSections([{ title: '', instructions: '', photoUrls: [] }]);
             setTags([]);
             setMaterials([]);
             setPatternType('crochet');
@@ -136,7 +140,7 @@ const Create = () => {
 
     const handleCancel = () => {
         setTitle('');
-        setSections([{ title: '', instructions: '', photoUrl: '' }]);
+        setSections([{ title: '', instructions: '', photoUrls: [] }]);
         setTags([]);
         setMaterials([]);
         navigate('/design');
@@ -166,7 +170,7 @@ const Create = () => {
             });
 
             setTitle('');
-            setSections([{ title: '', instructions: '', photoUrl: '' }]);
+            setSections([{ title: '', instructions: '', photoUrls: [] }]);
             setTags([]);
             setMaterials([]);
             setPatternType('crochet');
@@ -226,13 +230,13 @@ const Create = () => {
                                 <textarea placeholder='section instructions...' value={section.instructions} onChange={(e) => handleSectionChange(index, 'instructions', e.target.value)} required />
                             </div>
                             <div>
-                                <input type="file" accept="image/*" capture="user" onChange={(e) => handleImageUpload(e, index)} />
-                                {section.photoUrl && (
-                                    <div>
-                                        <img src={section.photoUrl} alt="Section" style={{ width: 100, height: 100 }} />
-                                        <button className="deletePhotoBtn" type="button" onClick={() => handleRemovePhoto(index)}>Delete Photo</button>
+                                <input type="file" accept="image/*" multiple onChange={(e) => handleImageUpload(e, index)} />
+                                {section.photoUrls.map((photoUrl, photoIndex) => (
+                                    <div key={photoIndex}>
+                                        <img src={photoUrl} alt="Section" style={{ width: 100, height: 100 }} />
+                                        <button className="deletePhotoBtn" type="button" onClick={() => handleRemovePhoto(index, photoIndex)}>Delete Photo</button>
                                     </div>
-                                )}
+                                ))}
                             </div>
                             <button className="sectionButton" type="button" onClick={() => removeSection(index)}>Remove Section</button>
                         </div>
@@ -263,6 +267,7 @@ const Create = () => {
         </div>
     );
 };
+
 
 
 export default Create
