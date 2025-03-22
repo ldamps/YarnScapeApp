@@ -99,21 +99,33 @@ const Edit = () => {
 
     // Handle image upload or capture
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, sectionIndex: number) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
+        const files = e.target.files;
+        if (!files) return;
 
         const formData = new FormData();
-        formData.append('file', file);
-        formData.append('upload_preset', 'yarnscape-images'); // Replace with your Cloudinary preset
+        formData.append('upload_preset', 'yarnscape-images');
 
         try {
-            const response = await axios.post('https://api.cloudinary.com/v1_1/dm2icxasv/image/upload', formData);
+            const updatedSections = [...sections];
+            
+            for (let i = 0; i < files.length; i++) {
+                formData.append('file', files[i]);
+
+                const response = await axios.post('https://api.cloudinary.com/v1_1/dm2icxasv/image/upload', formData);
+                const imageUrl = response.data.secure_url;
+
+                updatedSections[sectionIndex].photoUrl = imageUrl;
+                setSections(updatedSections);
+
+            }
+
+            /*const response = await axios.post('https://api.cloudinary.com/v1_1/dm2icxasv/image/upload', formData);
             const imageUrl = response.data.secure_url;
 
             // Update the section's photoUrl
             const updatedSections = [...sections];
             updatedSections[sectionIndex].photoUrl = imageUrl;
-            setSections(updatedSections);
+            setSections(updatedSections);*/
         } catch (error) {
             console.error('Error uploading image:', error);
             alert('Failed to upload image.');
