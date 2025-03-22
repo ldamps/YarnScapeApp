@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
 import './styles.css';
-import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, query, where, getDocs, doc, getDoc, updateDoc, setDoc } from 'firebase/firestore';
 import axios from 'axios';
 
 interface Section {
@@ -21,6 +21,11 @@ interface Pattern {
     materials: string[];
     published: boolean;
     skillLevel: 'beginner' | 'intermediate' | 'advanced';
+};
+
+interface Badge {
+    badgeName: string;
+    timestamp: Date;
 };
 
 const Create = () => {
@@ -110,6 +115,10 @@ const Create = () => {
     // Submit the form
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!user?.uid) {
+            console.error('User ID is required.');
+            return;
+        }
 
         try {
             await addDoc(collection(db, 'my-patterns'), {
@@ -123,6 +132,18 @@ const Create = () => {
                 skillLevel,
             });
 
+            // Get the current count of patterns the user has created
+            const userPatternsQuery = query(collection(db, 'my-patterns'), where('userId', '==', user?.uid));
+            const userPatternsSnapshot = await getDocs(userPatternsQuery);
+            const userPatternsCount = userPatternsSnapshot.size;
+
+            // Check if user should earn a badge
+            if (userPatternsCount === 1) {
+                await addBadgeToUser(user.uid, 'Design Rookie');
+            } else if (userPatternsCount === 5) {
+                await addBadgeToUser(user.uid, 'Pattern Prodigy');
+            }
+
             // Reset form
             setTitle('');
             setSections([{ title: '', instructions: '', photoUrls: [] }]);
@@ -135,6 +156,32 @@ const Create = () => {
             navigate('/design');
         } catch (error) {
             console.error('Error adding pattern:', error);
+        }
+    };
+
+    // Function to add badge to user
+    const addBadgeToUser = async (userId: string, badgeName: string) => {
+        const userBadgesRef = doc(db, 'user-badges', userId);
+        const userBadgesDoc = await getDoc(userBadgesRef);
+    
+        if (userBadgesDoc.exists()) {
+            const userBadgesData = userBadgesDoc.data();
+            const badges: Badge[] = userBadgesData?.badges || [];  // Explicitly type the badges array
+    
+            // Check if the badge has already been awarded
+            if (!badges.some((badge: Badge) => badge.badgeName === badgeName)) {
+                badges.push({ badgeName, timestamp: new Date() });
+    
+                // Update the user's badges in Firestore
+                await updateDoc(userBadgesRef, { badges });
+            }
+        } else {
+            // If user badges document doesn't exist, create one with the first badge
+            await setDoc(userBadgesRef, {
+                userId,
+                badges: [{ badgeName, timestamp: new Date() }],
+            });
+            alert(`Congratulations! You've earned the "${badgeName}" badge!`);
         }
     };
 

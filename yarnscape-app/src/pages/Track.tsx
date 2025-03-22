@@ -20,6 +20,12 @@ interface Review {
     timestamp: string;
 }
 
+interface Badge {
+    badgeName: string;
+    timestamp: Date;
+}
+
+
 const Track = () => {
     const auth = getAuth();
     const db = getFirestore();
@@ -64,6 +70,11 @@ const Track = () => {
 
     // Function to mark the projet as completed
     const handleClearProject = async (projectId: string) => {
+        if (!user?.uid) {
+            console.error('User ID is required.');
+            return;
+        };
+
         try {
             // Update the project as completed
             const trackingProjectRef = doc(db, 'tracking-projects', projectId);
@@ -79,7 +90,21 @@ const Track = () => {
                 )
             );
 
-            
+            // Check how many projects the user has completed
+            const completedProjectsQuery = query(
+                collection(db, 'tracking-projects'),
+                where('userId', '==', user.uid),
+                where('completed', '==', true)
+            );
+            const completedProjectsSnapshot = await getDocs(completedProjectsQuery);
+            const completedProjectsCount = completedProjectsSnapshot.size;
+
+            // Award badge if it's the user's first or fifth completed project
+            if (completedProjectsCount === 1) {
+                await addBadgeToUser('Project Pioneer');
+            } else if (completedProjectsCount === 5) {
+                await addBadgeToUser('Project Pro');
+            }
 
             // Determine if this pattern is a published pattern using tracking-projects patternId field
             // Get the patternId of the completed project
@@ -102,6 +127,34 @@ const Track = () => {
         } catch (error) {
             console.error('Error marking project as completed:', error);
             alert('There was an error completing the project.');
+        }
+    };
+
+    // Function to add badges to the user
+    const addBadgeToUser = async (badgeName: string) => {
+        if (!user?.uid) return;
+
+        const userBadgesRef = doc(db, 'user-badges', user.uid);
+        const userBadgesDoc = await getDoc(userBadgesRef);
+
+        try {
+            if (userBadgesDoc.exists()) {
+                const userBadgesData = userBadgesDoc.data();
+                const badges: any[] = userBadgesData?.badges || [];
+
+                // Check if the badge has already been awarded
+                if (!badges.some((badge: any) => badge.badgeName === badgeName)) {
+                    badges.push({ badgeName, timestamp: new Date() });
+
+                    // Update the user's badges in Firestore
+                    await updateDoc(userBadgesRef, { badges });
+
+                    // Show an alert that the user has earned a badge
+                    alert(`Congratulations! You've earned the "${badgeName}" badge!`);
+                }
+            }
+        } catch (error) {
+            console.error('Error adding badge:', error);
         }
     };
 
