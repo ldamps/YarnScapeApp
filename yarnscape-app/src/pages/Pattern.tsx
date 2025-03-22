@@ -28,6 +28,12 @@ interface thisPattern {
     skillLevel: 'beginner' | 'intermediate' | 'advanced';
 }
 
+// Interface to represent the reviews
+interface Review {
+    content: string;
+    timestamp: string;
+}
+
 const Pattern = () => {
     const auth = getAuth();
     const navigate = useNavigate();
@@ -37,6 +43,7 @@ const Pattern = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [isSaved, setIsSaved] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+    const [reviews, setReviews] = useState<Review[]>([]); // State to hold reviews
 
     // navigate back to the previous page
     const handleGoBack = () => {
@@ -86,6 +93,12 @@ const Pattern = () => {
                             setIsSaved(true); // Pattern is saved by the user
                         }
                     }
+
+                    // Fetch reviews for this pattern
+                    const reviewsSnapshot = await getDoc(patternRef);
+                    const reviewsData = reviewsSnapshot.data()?.reviews || [];
+                    setReviews(reviewsData);
+
                 } else {
                     setError('Pattern not found.');
                     console.log(error);
@@ -204,65 +217,82 @@ const Pattern = () => {
     return (
         <div className="pattern-details-container">
             <div className="pattern-details">
-            <div className="back-icon" onClick={handleGoBack}>
-                <FontAwesomeIcon icon={faArrowAltCircleLeft} size="1x" />
-            </div>
-            <h1>{pattern.title}</h1>
+                <div className="back-icon" onClick={handleGoBack}>
+                    <FontAwesomeIcon icon={faArrowAltCircleLeft} size="1x" />
+                </div>
+                <h1>{pattern.title}</h1>
 
-            <div className="pattern-facts">
-                <p><strong>Type:</strong> {pattern.type}</p>
-                <p><strong>Skill Level:</strong> {pattern.skillLevel}</p>
-            </div>
+                <div className="pattern-facts">
+                    <p><strong>Type:</strong> {pattern.type}</p>
+                    <p><strong>Skill Level:</strong> {pattern.skillLevel}</p>
+                </div>
 
-            <div className="pattern-sections">
-                <h2>Sections:</h2>
-                {pattern.sections.map((section, index) => (
-                    <div key={index} className="section">
-                        <h3>{section.title}</h3>
-                        <div>
-                            {/* Split instructions by newline and display each line separately */}
-                            {section.instructions.split('\n').map((line, lineIndex) => (
-                                <p key={lineIndex}>{line}</p>
-                            ))}
+                <div className="pattern-sections">
+                    <h2>Sections:</h2>
+                    {pattern.sections.map((section, index) => (
+                        <div key={index} className="section">
+                            <h3>{section.title}</h3>
+                            <div>
+                                {/* Split instructions by newline and display each line separately */}
+                                {section.instructions.split('\n').map((line, lineIndex) => (
+                                    <p key={lineIndex}>{line}</p>
+                                ))}
+                            </div>
+                            {section.photoUrl && (
+                                <img src={`${section.photoUrl}`}
+                                    alt={section.title}
+                                    className="section-photo"
+                                />
+                            )}
                         </div>
-                        {section.photoUrl && (
-                            <img src={`${section.photoUrl}`}
-                                alt={section.title}
-                                className="section-photo"
-                            />
-                        )}
-                    </div>
-                ))}
-            </div>
-
-            <div className="pattern-material">
-                <h2>Materials Needed:</h2>
-                <ul>
-                    {pattern.materials.map((material, index) => (
-                        <li key={index}>{material}</li>
                     ))}
-                </ul>
-            </div>
+                </div>
 
-            <div className="pattern-tags">
-                <h2>Tags:</h2>
-                <ul>
-                    {pattern.tags.map((tag, index) => (
-                        <li key={index}>{tag}</li>
-                    ))}
-                </ul>
-            </div>
+                <div className="pattern-material">
+                    <h2>Materials Needed:</h2>
+                    <ul>
+                        {pattern.materials.map((material, index) => (
+                            <li key={index}>{material}</li>
+                        ))}
+                    </ul>
+                </div>
 
-            <div className="pattern-buttons">
-                {/* Save Button if not saved, and Unsave Button if saved */}
-                {!isSaved && user && (
-                    <button onClick={handleSavePattern}>Save Pattern</button>
-                )}
-                {isSaved && user && (
-                    <button onClick={handleUnsavePattern}>Unsave Pattern</button>
-                )}
-                <button onClick={() => handleTrack(pattern.id)}>Track</button>
-            </div>
+                <div className="pattern-tags">
+                    <h2>Tags:</h2>
+                    <ul>
+                        {pattern.tags.map((tag, index) => (
+                            <li key={index}>{tag}</li>
+                        ))}
+                    </ul>
+                </div>
+
+                <div className="pattern-buttons">
+                    {/* Save Button if not saved, and Unsave Button if saved */}
+                    {!isSaved && user && (
+                        <button onClick={handleSavePattern}>Save Pattern</button>
+                    )}
+                    {isSaved && user && (
+                        <button onClick={handleUnsavePattern}>Unsave Pattern</button>
+                    )}
+                    <button onClick={() => handleTrack(pattern.id)}>Track</button>
+                </div>
+
+                {/* Display reviews */}
+                <div className="pattern-reviews">
+                    <h2>Reviews:</h2>
+                    {reviews.length > 0 ? (
+                        <ul>
+                            {reviews.map((review, index) => (
+                                <li key={index}>
+                                    <p><strong>{new Date(review.timestamp).toLocaleString()}</strong></p>
+                                    <p>{review.content}</p>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p>No reviews yet.</p>
+                    )}
+                </div>
             </div>
         </div>
     );
