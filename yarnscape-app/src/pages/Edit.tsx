@@ -106,26 +106,13 @@ const Edit = () => {
         formData.append('upload_preset', 'yarnscape-images');
 
         try {
-            const updatedSections = [...sections];
-            
-            for (let i = 0; i < files.length; i++) {
-                formData.append('file', files[i]);
-
-                const response = await axios.post('https://api.cloudinary.com/v1_1/dm2icxasv/image/upload', formData);
-                const imageUrl = response.data.secure_url;
-
-                updatedSections[sectionIndex].photoUrl = imageUrl;
-                setSections(updatedSections);
-
-            }
-
-            /*const response = await axios.post('https://api.cloudinary.com/v1_1/dm2icxasv/image/upload', formData);
+            const response = await axios.post('https://api.cloudinary.com/v1_1/dm2icxasv/image/upload', formData);
             const imageUrl = response.data.secure_url;
 
             // Update the section's photoUrl
             const updatedSections = [...sections];
             updatedSections[sectionIndex].photoUrl = imageUrl;
-            setSections(updatedSections);*/
+            setSections(updatedSections);
         } catch (error) {
             console.error('Error uploading image:', error);
             alert('Failed to upload image.');
@@ -320,7 +307,7 @@ const Edit = () => {
                                 <input
                                     type="file"
                                     accept="image/*"
-                                    capture="user"
+                                    multiple
                                     onChange={(e) => handleImageUpload(e, index)}
                                 />
                                 {/* Display the uploaded image */}
