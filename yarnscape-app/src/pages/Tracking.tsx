@@ -269,42 +269,42 @@ const Tracking = () => {
 
             {/* Sections */}
             <div className="sections">
-            <h2 className='sectionName'>Sections: </h2>
-            {projectData.sections.map((section, index) => {
-                const instructions = section.instructions.split('\n'); // Split instructions by newlines
+                <h2 className='sectionName'>Sections: </h2>
+                {projectData.sections.map((section, index) => {
+                    const instructions = section.instructions.split('\n'); // Split instructions by newlines
 
-                return (
-                    <div key={index}>
-                        {/* Section Title (Collapsible) */}
-                        <div
-                            onClick={() => handleCollapseToggle(index)}
-                            style={{ cursor: 'pointer', fontWeight: 'bold', padding: '5px 0' }}
-                        >
-                            {section.title}
-                        </div>
-
-                        {/* Section Instructions (Separated by Rows) */}
-                        {!collapsedSections[index] && (
-                            <div>
-                                {instructions.map((instruction, rowIndex) => (
-                                    <div
-                                        key={rowIndex}
-                                        onClick={() => handleRowClick(rowIndex)}
-                                        style={{
-                                            backgroundColor: selectedRowIndex === rowIndex ? 'lightblue' : 'transparent',
-                                            padding: '5px',
-                                            cursor: 'pointer',
-                                        }}
-                                    >
-                                        {instruction}
-                                    </div>
-                                ))}
-                                {section.photoUrl && <img src={section.photoUrl} alt={section.title} />}
+                    return (
+                        <div key={index}>
+                            {/* Section Title (Collapsible) */}
+                            <div
+                                onClick={() => handleCollapseToggle(index)}
+                                style={{ cursor: 'pointer', fontWeight: 'bold', padding: '5px 0' }}
+                            >
+                                {section.title}
                             </div>
-                        )}
-                    </div>
-                );
-            })}
+
+                            {/* Section Instructions (Separated by Rows) */}
+                            {!collapsedSections[index] && (
+                                <div>
+                                    {instructions.map((instruction, rowIndex) => (
+                                        <div
+                                            key={rowIndex}
+                                            onClick={() => handleRowClick(rowIndex)}
+                                            style={{
+                                                backgroundColor: selectedRowIndex === rowIndex ? 'lightblue' : 'transparent',
+                                                padding: '5px',
+                                                cursor: 'pointer',
+                                            }}
+                                        >
+                                            {instruction}
+                                        </div>
+                                    ))}
+                                    {section.photoUrl && <img src={section.photoUrl} alt={section.title} />}
+                                </div>
+                            )}
+                        </div>
+                    );
+                })}
             </div>
 
             {/* Pattern-wide Photos Upload */}
@@ -343,14 +343,14 @@ const Tracking = () => {
                     <button onClick={() => handleDeleteNote(index)}>Delete Note</button>
                 </div>
             ))}
-            <button onClick={handleAddNote}>Add Note</button>
+            <button onClick={handleAddNote}>Type Note</button>
 
             {/* Start/Stop Listening Button */}
             <div>
                 {isListening ? (
                     <button onClick={stopListening}>Stop Recording</button>
                 ) : (
-                    <button onClick={startListening}>Start Recording</button>
+                    <button onClick={startListening}>Record Note</button>
                 )}
             </div>
             </div>
