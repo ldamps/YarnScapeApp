@@ -9,9 +9,7 @@
 
 export function register() {
     if (process.env.NODE_ENV === 'production') {
-        const publicUrl = new URL(
-            window.location.href
-        );
+        const publicUrl = new URL(window.location.href);
     
         if (publicUrl.hostname === 'localhost') {
             return;
@@ -20,14 +18,13 @@ export function register() {
         // Ensure service worker is only registered in production, and is not cached in development.
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker
-            //.register('/service-worker.js')  // Path to your service worker
-            .register('/service-worker.js')
-            .then((registration) => {
-                console.log('Service Worker registered: ', registration);
-            })
-            .catch((registrationError) => {
-                console.log('Service Worker registration failed: ', registrationError);
-            });
+                .register('/YarnScapeApp/service-worker.js') // Updated path here
+                .then((registration) => {
+                    console.log('Service Worker registered: ', registration);
+                })
+                .catch((registrationError) => {
+                    console.log('Service Worker registration failed: ', registrationError);
+                });
         }
     }
 }
