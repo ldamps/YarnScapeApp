@@ -34,7 +34,7 @@
     --c-background-primary: #505050;
     --c-background-secondary: #222128;
     --c-background-button: #3A3B3C;
-    --c-background-focus: #8BAEc7;
+    --c-background-focus: #1F2528;
     --c-background-hover: #A1B9D2;
     --c-background-inputfocus: #808080;
 }
@@ -330,11 +330,9 @@ Homepage styles */
 /*---------------------------------------------------
 User profile styles */
 .profile-container {
-    padding: 60px;
+    padding: 20px;
     max-width: 100%;
     background-color: var(--c-background-primary);
-    margin-top: 3%;
-    margin-bottom: 3%;
 }
 
 /* Profile Header */
@@ -343,7 +341,6 @@ User profile styles */
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
-    color: var(--c-text-primary);
 }
 
 .profile-header h1 {
@@ -352,7 +349,8 @@ User profile styles */
 }
 
 .setting-icon {
-    color: var(--c-text-primary);
+    font-size: 24px;
+    cursor: pointer;
 }
 
 .setting-icon svg {
@@ -370,7 +368,7 @@ User profile styles */
 .badges-section,
 .my-projects,
 .my-patterns {
-    margin-bottom: 10px;
+    margin-bottom: 30px;
 }
 
 h2, h3 {
@@ -384,17 +382,11 @@ ul {
     padding-left: 0;
 }
 
-.myPatterns-item span {
-    font-size: var(--text-size);
-    text-align: left;
-}
-
 /* Badge Section */
 .badge-item {
     display: flex;
     justify-content: space-between;
-    background-color: var(--c-background-focus);
-    color: var(--c-text-primary);
+    background-color: var(--c-background-secondary);
     padding: 10px;
     margin-bottom: 5px;
     border-radius: 5px;
@@ -402,7 +394,6 @@ ul {
 
 .badge-item span {
     color: var(--c-text-primary);
-    opacity: 90%;
 }
 
 /* Projects Section */
@@ -423,30 +414,37 @@ ul {
 .trackingProject-actions,
 .myPatterns-columnbtns {
     display: flex;
-    gap: 5px;
+    gap: 10px; /* Ensures buttons are spaced out */
 }
 
+/* Ensure buttons are in a row */
 button {
     padding: 8px 15px;
     background-color: var(--c-background-button);
     color: var(--c-text-primary);
     border: none;
     border-radius: 5px;
+    cursor: pointer;
 }
 
-/* Responsive Design for Mobile (especially iPhone 11) */
+button:disabled {
+    background-color: var(--c-background-inputfocus);
+    cursor: not-allowed;
+}
+
 @media (max-width: 767px) {
-    /* Make the text more mobile-friendly */
     .profile-header h1 {
         font-size: var(--text-headersize);
     }
 
-    /* Adjust profile container padding for mobile */
-    .profile-container {
-        padding: 60px;
+    .setting-icon {
+        font-size: 20px;
     }
 
-    /* Stack project and pattern items */
+    .profile-container {
+        padding: 10px;
+    }
+
     .trackingProjects-column, .myPatterns-column {
         flex-direction: column;
     }
@@ -457,18 +455,19 @@ button {
         text-align: left;
     }
 
-    /* Buttons should be stacked and centered */
     .trackingProject-actions,
     .myPatterns-columnbtns {
-        flex-direction: column;
+        flex-direction: row;
+        justify-content: flex-start;
         align-items: center;
     }
 
     button {
-        width: 100%;
-        margin-bottom: 10px;
+        width: auto;
+        margin-right: 5px; /* Adds space between buttons */
     }
 
+    /* Badge item layout */
     .badge-item {
         flex-direction: column;
         text-align: left;

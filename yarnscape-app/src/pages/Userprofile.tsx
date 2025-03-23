@@ -402,7 +402,7 @@ const Userprofile = () => {
             <div className="profile-body">
                 <div className="badges-section">
                     <div className="badges-section">
-                        <h3>Badges:</h3>
+                        <h2>Badges:</h2>
                         {badges.length > 0 ? (
                             <ul>
                                 {badges.map((badge, index) => (
