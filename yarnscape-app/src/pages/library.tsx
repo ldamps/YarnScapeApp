@@ -34,6 +34,52 @@ const Library = () => {
     const [savedPatterns, setSavedPatterns] = useState<Set<string>>(new Set()); // Track saved patterns by ID
     
     useEffect(() => {
+        const fetchPatterns = async () => {
+            try {
+                // Get the current user's ID
+                const currentUserId = auth.currentUser?.uid;
+    
+                if (!currentUserId) {
+                    console.error('No user is logged in');
+                    return;
+                }
+    
+                // Query to get published patterns excluding the current user's patterns
+                const patternsRef = collection(db, 'published-patterns');
+                const q = query(patternsRef, where('published', '==', true));
+                const querySnapshot = await getDocs(q);
+    
+                const fetchedPatterns: Pattern[] = [];
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    
+                    // Check if the author is not the current user
+                    if (data.userId !== currentUserId) {
+                        fetchedPatterns.push({
+                            id: doc.id,
+                            title: data.title,
+                            author: data.author,
+                            type: data.type,
+                            skillLevel: data.skillLevel,
+                            published: data.published,
+                            coverImageUrl: data.coverImageUrl,
+                            sections: data.sections, // Assuming 'sections' is available
+                            tags: data.tags, // Assuming 'tags' is available
+                            materials: data.materials, // Assuming 'materials' is available
+                        });
+                    }
+                });
+    
+                setPatterns(fetchedPatterns);
+            } catch (error) {
+                console.error('Error fetching patterns:', error);
+            }
+        };
+    
+        fetchPatterns();
+    }, []);
+
+    /*useEffect(() => {
         // fetch patterns from published-patterns which aren't the user's own pattern
         const fetchPatterns = async () => {
             try {
@@ -63,7 +109,7 @@ const Library = () => {
             }
         };
         fetchPatterns();
-    }, [user?.uid]); // Only run when the user's ID changes
+    }, [user?.uid]); // Only run when the user's ID changes*/
 
     useEffect(() => {
         // Apply search and filter every time a search/filter changes

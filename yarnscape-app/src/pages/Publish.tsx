@@ -150,8 +150,6 @@ const Publish = () => {
                     badges: [{ badgeName, timestamp: new Date() }],
                 });
     
-                // Show an alert that the user has earned a badge
-                alert(`Congratulations! You've earned the "${badgeName}" badge!`);
             }
         } catch (error) {
             console.error('Error adding badge:', error);
