@@ -7,12 +7,14 @@ import { getAuth } from 'firebase/auth';
 import axios from 'axios';
 import './styles.css'
 
+// interface to represent a tracking project's section
 interface Section {
     title: string;
     instructions: string;
     photoUrls?: string[]; // Optional photo URL
 };
 
+// interface to represent the project that's being tracking
 interface TrackingProject {
     userId: string;
     patternId: string;
@@ -33,7 +35,7 @@ interface TrackingProject {
 }
 
 const Tracking = () => {
-    const { projectId } = useParams<{ projectId: string }>();
+    const { projectId } = useParams<{ projectId: string }>(); // get projectid from the url
     const db = getFirestore(); // Firestore instance
     const auth = getAuth();
     const user = auth.currentUser;
@@ -85,6 +87,7 @@ const Tracking = () => {
         }
     }, []);
 
+    // start listening: open microphone and start transcribing
     const startListening = () => {
         if (recognition) {
             setIsListening(true);
@@ -92,6 +95,7 @@ const Tracking = () => {
         }
     };
 
+    // stop listening: close microphone and stop transcribing
     const stopListening = () => {
         if (recognition) {
             setIsListening(false);
@@ -158,7 +162,6 @@ const Tracking = () => {
         setNotes(updatedNotes);
     };
 
-
     // Handle image upload for the whole pattern
     const handleImageUploadForPattern = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
@@ -196,7 +199,7 @@ const Tracking = () => {
     };
 
 
-    // Function to update the project data
+    // Function to update the project data to reflect tracking done
     const handleUpdateProject = async () => {
         if (!projectId || !projectData) {
             return;
@@ -235,7 +238,7 @@ const Tracking = () => {
     };
 
     const handleCancel = () => {
-        navigate(-1);
+        navigate(-1); // go back to a previous page
     };
 
     // Loading state and display of the project data

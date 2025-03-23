@@ -77,7 +77,7 @@ const Termscon = () => {
                 <p>Waiver: Failure to enforce any provision of these Terms shall not be deemed a waiver of that provision.</p>
 
                 <h3>13. Contact Us</h3>
-                <p>f you have any questions or concerns regarding these terms, please contact us at: </p>
+                <p>If you have any questions or concerns regarding these terms, please contact us at: </p>
                 <p className="emailaddress">
                     enquiries@yarnscape.com
                 </p>

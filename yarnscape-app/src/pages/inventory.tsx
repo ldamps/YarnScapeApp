@@ -1,4 +1,4 @@
-// For Inventory management screen
+// For Inventory management screen - to store tools and yarn
 import React, { useState, useEffect } from 'react';
 import BottomNav from '../components/bottomNav';
 import './styles.css'
@@ -25,7 +25,6 @@ interface Yarn {
     quantity: number;
 }
 
-
 const Inventory = () => {
     const auth = getAuth();
     const [isYarnModalOpen, setIsYarnModalOpen] = useState(false);
@@ -40,6 +39,7 @@ const Inventory = () => {
     useEffect(() => {
         if (user) {
             const fetchYarnInventory = async () => {
+                // fetch the user's yarn inventory using the signed in user's id
                 const q = query(
                     collection(db, 'yarn-inventory'),
                     where('userId', '==', user.uid)
@@ -57,6 +57,7 @@ const Inventory = () => {
             fetchYarnInventory();
 
             const fetchToolInventory = async () => {
+                // fetch the user's tool inventory using the signed in user's id
                 const q = query(
                     collection(db, 'tool-inventory'),
                     where('userId', '==', user.uid)

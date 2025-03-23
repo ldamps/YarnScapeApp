@@ -5,12 +5,14 @@ import { getFirestore, doc, getDoc, updateDoc, deleteDoc } from 'firebase/firest
 import { getAuth } from 'firebase/auth';
 import axios from 'axios';
 
+// interface to represent sections of the pattern
 interface Section {
     title: string;
     instructions: string;
     photoUrls: string[]; // Array of photo URLs
 };
 
+// interface to represent the pattern being tracked
 interface Pattern {
     id: string;
     title: string;
@@ -36,7 +38,7 @@ const Edit = () => {
     const [patternType, setPatternType] = useState<'crochet' | 'knitting'>('crochet'); // default is crochet
     const [skillLevel, setSkillLevel] = useState<'beginner' | 'intermediate' | 'advanced'>('beginner'); // default is beginner
 
-    // Fetch the pattern data when the component mounts
+    // Fetch the pattern data from 'my-patterns' collection
     useEffect(() => {
         const fetchPattern = async () => {
             if (!patternId) return;
@@ -57,7 +59,6 @@ const Edit = () => {
                 console.error('Pattern not found');
             }
         };
-
         fetchPattern();
     }, [patternId, db]);
 
@@ -66,33 +67,40 @@ const Edit = () => {
         setTitle(e.target.value);
     };
 
+    // handle tag changes
     const handleTagChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setTags(e.target.value.split(',').map(tag => tag.trim())); // Converts comma-separated tags into an array
     };
 
+    // handle material changes
     const handleMaterialsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setMaterials(e.target.value.split(',').map(material => material.trim()));
     };
 
+    // handle section changes
     const handleSectionChange = (index: number, key: keyof Section, value: string) => {
         const updatedSections = [...sections];
         updatedSections[index] = { ...updatedSections[index], [key]: value };
         setSections(updatedSections);
     };
 
+    // add a new section
     const addSection = () => {
         setSections([...sections, { title: '', instructions: '', photoUrls: [] }]);
     };
 
+    // remove a section
     const removeSection = (index: number) => {
         const updatedSections = sections.filter((_, i) => i !== index);
         setSections(updatedSections);
     };
 
+    // change pattern type
     const handlePatternTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPatternType(e.target.value as 'crochet' | 'knitting');
     };
 
+    // change skill level
     const handleSkillLevelChange = (level: 'beginner' | 'intermediate' | 'advanced') => {
         setSkillLevel(level);
     };
@@ -103,14 +111,14 @@ const Edit = () => {
         if (!files) return;
 
         const formData = new FormData();
-        formData.append('upload_preset', 'yarnscape-images');
+        formData.append('upload_preset', 'yarnscape-images'); // cloudinary preset name: yarnscape-images
 
         try {
             // Upload each selected file to Cloudinary
             const uploadedUrls: string[] = [];
             for (const file of files) {
                 formData.append('file', file);
-                const response = await axios.post('https://api.cloudinary.com/v1_1/dm2icxasv/image/upload', formData);
+                const response = await axios.post('https://api.cloudinary.com/v1_1/dm2icxasv/image/upload', formData); // dm2icxasv is the cloud name
                 uploadedUrls.push(response.data.secure_url);
             }
 
@@ -138,6 +146,7 @@ const Edit = () => {
         try {
             if (!patternId) return;
 
+            // update the edits so the saved pattern in 'my-patterns' is up to date
             const docRef = doc(db, 'my-patterns', patternId);
             await updateDoc(docRef, {
                 title: title,
@@ -188,13 +197,14 @@ const Edit = () => {
         }
     };
 
+    // to publish a pattern
     const handlePublish = async (e: React.MouseEvent) => {
         e.preventDefault();  // Prevent the form from submitting
 
         if (!patternId) return;
 
         try {
-            // update the pattern's "published" status
+            // save changes made to the pattern
             const docRef = doc(db, 'my-patterns', patternId);
             await updateDoc(docRef, {
                 patternID: patternId,
@@ -207,7 +217,7 @@ const Edit = () => {
                 skillLevel: skillLevel,
             });
 
-            // Navigate to the publish page
+            // Navigate to the publish page with the selected pattern's id
             navigate(`/publish/${patternId}`);
         } catch (error) {
             console.error('Error publishing pattern: ', error);

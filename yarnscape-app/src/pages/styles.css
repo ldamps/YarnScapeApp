@@ -2043,6 +2043,7 @@ Tracking styles */
     border-radius: 5px;
     border: 1px solid #ccc;
     resize: none;
+    color: var(--c-text-primary)
 }
 
 .notes textarea:focus {
@@ -2215,6 +2216,7 @@ h1 {
     outline: none;
     font-size: var(--text-xsmall);
     background-color: var(--c-background-primary);
+    color:var(--c-text-primary);
 }
 
 /* Pattern List Grid */

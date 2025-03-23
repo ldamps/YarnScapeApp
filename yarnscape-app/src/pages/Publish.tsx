@@ -6,6 +6,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getFirestore, doc, getDoc, addDoc, collection, updateDoc, where, query, getDocs, setDoc } from 'firebase/firestore';
 import axios from 'axios';
 
+// interface to represent a badge
 interface Badge {
     badgeName: string;
     timestamp: Date;
@@ -15,7 +16,7 @@ const Publish = () => {
     const auth = getAuth();
     const user = auth.currentUser; // the current user
     const navigate = useNavigate();
-    const { patternId } = useParams<{ patternId: string }>();
+    const { patternId } = useParams<{ patternId: string }>(); // get patternid from the url
 
     const [pattern, setPattern] = useState<any>(null); // Store the pattern data
     const [authorName, setAuthorName] = useState('');
@@ -25,6 +26,7 @@ const Publish = () => {
 
     useEffect(() => {
         const fetchPattern = async () => {
+            // get the pattern the user wants to publish from my-patterns collection
             if (patternId) {
                 const docRef = doc(db, 'my-patterns', patternId);
                 const docSnap = await getDoc(docRef);
@@ -37,18 +39,20 @@ const Publish = () => {
                 }
             }
         };
-
         fetchPattern();
     }, [patternId, db, navigate]);
 
+    // change author
     const handleAuthorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setAuthorName(e.target.value);
     };
 
+    // agree that the pattern isn't copyrighted
     const handleAgreeChange = () => {
         setAgreed(!agreed);
     };
 
+    // upload a cover image
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -68,11 +72,13 @@ const Publish = () => {
         }
     };
 
+    // remove an image
     const handleRemoveImage = () => {
         setCoverImageUrl(''); // Clear the cover image URL
-        setCoverImage(null); // Optionally clear the file object
+        setCoverImage(null); // Clear the file object
     };
 
+    // publish the pattern
     const handlePublish = async () => {
         if (!agreed) {
             alert('You must confirm that the pattern is not copyrighted!');
@@ -103,7 +109,7 @@ const Publish = () => {
             // Check if this is the user's first published pattern
             const userPublishedPatternsQuery = query(
                 collection(db, 'published-patterns'),
-                where('userId', '==', user?.uid) // Assuming you store the userId in the published pattern document
+                where('userId', '==', user?.uid)
             );
             const userPublishedPatternsSnapshot = await getDocs(userPublishedPatternsQuery);
             const publishedPatternsCount = userPublishedPatternsSnapshot.size;
@@ -122,6 +128,7 @@ const Publish = () => {
         }
     };
 
+    // give user a badge
     const addBadgeToUser = async (userId: string | undefined, badgeName: string) => {
         if (!userId) return;
     
@@ -149,7 +156,6 @@ const Publish = () => {
                     userId,
                     badges: [{ badgeName, timestamp: new Date() }],
                 });
-    
             }
         } catch (error) {
             console.error('Error adding badge:', error);

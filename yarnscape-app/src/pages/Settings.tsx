@@ -30,7 +30,7 @@ const Settings = () => {
         navigate('/userprofile')
     }
 
-    const [userEmail, setUserEmail] = useState<string | null>(null); // consts for the user's email
+    const [userEmail, setUserEmail] = useState<string | null>(null); // const for the user's email
 
     // Get the current users email and notification preferences
     useEffect(() => {
@@ -42,21 +42,12 @@ const Settings = () => {
         }
     }, [auth.currentUser]);
 
-    // Function to save notification preferences to Firebase
-    const saveNotificationPreferences = async (enabled: boolean) => {
-        const user = auth.currentUser;
-        if (user) {
-            const docRef = doc(db, 'users', user.uid);
-            await setDoc(docRef, { notificationsEnabled: enabled }, { merge: true });
-        }
-    };
-
     // Function to sign the current user out and navigate them to the login page
     const handleSignout = async () => {
         try {
             await auth.signOut();
             //window.location.href='/login';
-            navigate('/login')
+            navigate('/login') // navigate to the login page
         } catch (error) {
             console.log(error);
         }
