@@ -17,6 +17,7 @@ import Tracking from './pages/Tracking'
 import EditMyPattern from './pages/Edit'
 import Publish from './pages/Publish'
 import Pattern from './pages/Pattern'
+import * as serviceWorkerRegistration from './serviceWorkerRegisteration';
 
 import {
   BrowserRouter as Router, Routes, Route, Navigate
@@ -68,7 +69,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       </Routes>
     </Router>
   </React.StrictMode>,
-)
+);
+
+serviceWorkerRegistration.register();
 
 export {app, db, auth, storage};
 
