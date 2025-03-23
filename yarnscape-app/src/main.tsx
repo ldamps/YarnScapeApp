@@ -44,6 +44,19 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 const storage = getStorage(app);
 
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/YarnScapeApp/service-worker.js')
+      .then((registration) => {
+        console.log('Service Worker registered with scope: ', registration.scope);
+      })
+      .catch((error) => {
+        console.error('Service Worker registration failed: ', error);
+      });
+  });
+}
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <Router basename='/YarnScapeApp'>
