@@ -53,25 +53,30 @@ const Tracking = () => {
     // Add Speech Recognition functionality
     const [isListening, setIsListening] = useState(false);
     const [recognition, setRecognition] = useState<any>(null);
+    const [isSupported, setIsSupported] = useState(true);
 
     useEffect(() => {
-        // Set up the SpeechRecognition API if available
-        if ('webkitSpeechRecognition' in window) {
+        // Check if SpeechRecognition is available
+        const isMobile = /iPhone|iPad|iPod/i.test(navigator.userAgent); // Detect mobile devices (especially iPhone)
+
+        if ('webkitSpeechRecognition' in window && !isMobile) {
             const SpeechRecognition = (window as any).webkitSpeechRecognition;
             const recognitionInstance = new SpeechRecognition();
-            recognitionInstance.interimResults = true; // Allows for partial recognition
+            recognitionInstance.interimResults = true;
             recognitionInstance.lang = 'en-US';
 
             recognitionInstance.onresult = (event: any) => {
                 const transcript = event.results[event.results.length - 1][0].transcript;
                 if (event.results[0].isFinal) {
+                    // Handle the final speech result
                     setNotes((prevNotes) => [...prevNotes, transcript]);
                 }
             };
 
             setRecognition(recognitionInstance);
         } else {
-            alert("Speech Recognition is not supported in this browser.");
+            setIsSupported(false); // Speech Recognition is not supported
+            alert("Speech recognition is not supported on your device/browser.");
         }
     }, []);
 
@@ -351,10 +356,16 @@ const Tracking = () => {
 
             {/* Start/Stop Listening Button */}
             <div>
-                {isListening ? (
-                    <button onClick={stopListening}>Stop Recording</button>
+                {isSupported ? (
+                    <>
+                        {isListening ? (
+                            <button onClick={stopListening}>Stop Recording</button>
+                        ) : (
+                            <button onClick={startListening}>Record Note</button>
+                        )}
+                    </>
                 ) : (
-                    <button onClick={startListening}>Record Note</button>
+                    <p>Speech Recognition is not supported in your browser or on this device.</p>
                 )}
             </div>
             </div>
