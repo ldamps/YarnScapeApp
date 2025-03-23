@@ -22,6 +22,11 @@ interface TrackingProject {
     lastEdited: string;
 }
 
+interface Badge {
+    badgeName: string;
+    timestamp: Date;
+}
+
 const Userprofile = () => {
     const auth = getAuth();
     const user = auth.currentUser; // the current user
@@ -31,12 +36,56 @@ const Userprofile = () => {
     const [trackingProjects, setTrackingProjects] = useState<TrackingProject[]>([]);
     const [savedPatterns, setSavedPatterns] = useState<Pattern[]>([]);
     const [loadingTracking, setLoadingTracking] = useState(true);
-    const [badges, setBadges] = useState<string[]>([]);
+    const [badges, setBadges] = useState<Badge[]>([]);
 
     const navigate = useNavigate();
     const navigateToSettings = () => {
         navigate('/settings');
     };
+
+    useEffect(() => {
+        const fetchBadges = async () => {
+            if (!user?.uid) {
+                console.error('User ID is required.');
+                return;
+            };
+
+            try {
+                // Reference to the user-badges document for the given userId
+                const docRef = doc(db, 'user-badges', user.uid);
+                const docSnapshot = await getDoc(docRef);
+    
+                if (docSnapshot.exists()) {
+                    const badgesData = docSnapshot.data()?.badges; // 'badges' is a map
+    
+                    if (badgesData) {
+                        const badgeList: Badge[] = [];
+    
+                        // Iterate through the map to extract badge info
+                        Object.keys(badgesData).forEach((badgeKey) => {
+                            const badge = badgesData[badgeKey];
+                            const timestamp = badge.timestamp.toDate(); // Convert Firestore Timestamp to Date
+                            badgeList.push({
+                                badgeName: badge.badgeName,
+                                timestamp,
+                            });
+                        });
+    
+                        setBadges(badgeList);
+                    }
+                } else {
+                    console.log('No badges found.');
+                }
+            } catch (error) {
+                console.log('Error fetching badges.');
+                console.error('Error fetching badges:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+    
+        fetchBadges();
+    }, [user, db]);
 
     // List the current user's patterns, including their published status
     useEffect(() => {
@@ -58,7 +107,6 @@ const Userprofile = () => {
             });
             setMyPatterns(myPatternList);
             setLoading(false);
-            checkBadges(myPatternList);
             };
         fetchMyPatterns();
         }
@@ -82,7 +130,6 @@ const Userprofile = () => {
                 });
                 setTrackingProjects(trackingProjectList);
                 setLoadingTracking(false);
-                checkBadges(trackingProjectList);
             };
             fetchTrackingProjects();
         }
@@ -111,30 +158,6 @@ const Userprofile = () => {
         }
     }, [user, db]);
 
-    // Check for badges earned based on specific conditions
-    const checkBadges = (patternsOrProjects: Pattern[] | TrackingProject[]) => {
-        const earnedBadges: string[] = [];
-        
-        // Badge 1: Earn "First Product" badge if the user has created at least one pattern.
-        if (myPatterns.length > 0) {
-            earnedBadges.push('Created Your First Pattern!');
-        }
-
-        // Badge 2: Earn "Project Completion" badge if the user has completed at least 5 projects.
-        const completedProjects = trackingProjects.filter((project) => project.completed);
-        if (completedProjects.length >= 5) {
-            earnedBadges.push('Project Prodigy!');
-        }
-
-        // Badge 3: Earn "Pattern Creator" badge if the user has created 10+ patterns.
-        if (myPatterns.length >= 10) {
-            earnedBadges.push('Master Creator!');
-        }
-
-        setBadges(earnedBadges);
-    };
-
-
     // For the bottom navbar
     const [currentTab, setCurrentTab] = useState('userprofile');
 
@@ -144,10 +167,20 @@ const Userprofile = () => {
 
     // Handle Publish/Unpublish and Edit button actions
     const handlePublishUnpublish = async (patternId: string, isPublished: boolean) => {
+        const q = query(collection(db, 'published-patterns'), where('patternID', '==', patternId));
+        const querySnapshot = await getDocs(q);
+        
+        // Check if the document exists and delete it
+        querySnapshot.forEach(async (docSnapshot) => {
+            await deleteDoc(docSnapshot.ref);
+            console.log(`Pattern with ID ${patternId} deleted from 'published-patterns'`);
+        });
+
         const patternRef = doc(db, 'my-patterns', patternId);
         await updateDoc(patternRef, {
             published: !isPublished, // Toggle published status
         });
+
         // Re-fetch patterns after update
         const updatedPatterns = myPatterns.map((pattern) =>
             pattern.id === patternId ? { ...pattern, published: !isPublished } : pattern
@@ -369,24 +402,30 @@ const Userprofile = () => {
 
     return (
         <div className="profile-container">
-
             <div className="profile-header">
                 <h1>User Profile</h1>
                 <div className="setting-icon" onClick={navigateToSettings}>
-                    <FontAwesomeIcon icon={faCog} size="2x" />
+                    <FontAwesomeIcon icon={faCog} size="1x" />
                 </div>
             </div>
 
             <div className="profile-body">
                 <div className="badges-section">
-                    <h3>Badges:</h3>
-                    <div className="badges-list">
+                    <div className="badges-section">
+                        <h2>Badges:</h2>
                         {badges.length > 0 ? (
-                            badges.map((badge, index) => (
-                                <span key={index} className="badge">{badge}</span>
-                            ))
+                            <ul>
+                                {badges.map((badge, index) => (
+                                    <li key={index}>
+                                        <div className="badge-item">
+                                            <span>{badge.badgeName}</span>
+                                            <span>{badge.timestamp.toLocaleDateString()}</span>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
                         ) : (
-                            <p>No badges earned yet.</p>
+                            <p>No badges awarded yet.</p>
                         )}
                     </div>
                 </div>

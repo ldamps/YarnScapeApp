@@ -10,7 +10,7 @@ import './styles.css'
 interface Section {
     title: string;
     instructions: string;
-    photoUrl?: string; // Optional photo URL
+    photoUrls?: string[]; // Optional photo URL
 };
 
 interface TrackingProject {
@@ -53,25 +53,35 @@ const Tracking = () => {
     // Add Speech Recognition functionality
     const [isListening, setIsListening] = useState(false);
     const [recognition, setRecognition] = useState<any>(null);
+    const [isSupported, setIsSupported] = useState(true);
 
     useEffect(() => {
-        // Set up the SpeechRecognition API if available
-        if ('webkitSpeechRecognition' in window) {
-            const SpeechRecognition = (window as any).webkitSpeechRecognition;
+        // Check if SpeechRecognition is available
+        const isMobile = /iPhone|iPad|iPod/i.test(navigator.userAgent); // Detect mobile devices (especially iPhone)
+
+        if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+            const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
             const recognitionInstance = new SpeechRecognition();
-            recognitionInstance.interimResults = true; // Allows for partial recognition
+            recognitionInstance.interimResults = true;
             recognitionInstance.lang = 'en-US';
 
             recognitionInstance.onresult = (event: any) => {
                 const transcript = event.results[event.results.length - 1][0].transcript;
                 if (event.results[0].isFinal) {
+                    // Handle the final speech result
                     setNotes((prevNotes) => [...prevNotes, transcript]);
                 }
             };
 
+            recognitionInstance.onerror = (error: any) => {
+                console.error('Speech recognition error', error);
+                setIsSupported(false);
+            };
+
             setRecognition(recognitionInstance);
         } else {
-            alert("Speech Recognition is not supported in this browser.");
+            setIsSupported(false); // Speech Recognition is not supported
+            console.error('Speech recognition is not supported on your device/browser.');
         }
     }, []);
 
@@ -88,7 +98,6 @@ const Tracking = () => {
             recognition.stop(); // Stop listening
         }
     };
-
 
     // Fetch project data on mount
     useEffect(() => {
@@ -269,42 +278,46 @@ const Tracking = () => {
 
             {/* Sections */}
             <div className="sections">
-            <h2 className='sectionName'>Sections: </h2>
-            {projectData.sections.map((section, index) => {
-                const instructions = section.instructions.split('\n'); // Split instructions by newlines
+                <h2 className='sectionName'>Sections: </h2>
+                {projectData.sections.map((section, index) => {
+                    const instructions = section.instructions.split('\n'); // Split instructions by newlines
 
-                return (
-                    <div key={index}>
-                        {/* Section Title (Collapsible) */}
-                        <div
-                            onClick={() => handleCollapseToggle(index)}
-                            style={{ cursor: 'pointer', fontWeight: 'bold', padding: '5px 0' }}
-                        >
-                            {section.title}
-                        </div>
-
-                        {/* Section Instructions (Separated by Rows) */}
-                        {!collapsedSections[index] && (
-                            <div>
-                                {instructions.map((instruction, rowIndex) => (
-                                    <div
-                                        key={rowIndex}
-                                        onClick={() => handleRowClick(rowIndex)}
-                                        style={{
-                                            backgroundColor: selectedRowIndex === rowIndex ? 'lightblue' : 'transparent',
-                                            padding: '5px',
-                                            cursor: 'pointer',
-                                        }}
-                                    >
-                                        {instruction}
-                                    </div>
-                                ))}
-                                {section.photoUrl && <img src={section.photoUrl} alt={section.title} />}
+                    return (
+                        <div key={index}>
+                            {/* Section Title (Collapsible) */}
+                            <div
+                                onClick={() => handleCollapseToggle(index)}
+                                style={{ cursor: 'pointer', fontWeight: 'bold', padding: '5px 0' }}
+                            >
+                                {section.title}
                             </div>
-                        )}
-                    </div>
-                );
-            })}
+
+                            {/* Section Instructions (Separated by Rows) */}
+                            {!collapsedSections[index] && (
+                                <div>
+                                    {instructions.map((instruction, rowIndex) => (
+                                        <div
+                                            key={rowIndex}
+                                            onClick={() => handleRowClick(rowIndex)}
+                                            style={{
+                                                backgroundColor: selectedRowIndex === rowIndex ? 'lightblue' : 'transparent',
+                                                padding: '5px',
+                                                cursor: 'pointer',
+                                            }}
+                                        >
+                                            {instruction}
+                                        </div>
+                                    ))}
+                                    {section.photoUrls?.map((url, photoIndex) => (
+                                            <div key={photoIndex}>
+                                                <img src={url} alt="Section photo" style={{ width: 100, height: 100 }} />
+                                            </div>
+                                        ))}
+                                </div>
+                            )}
+                        </div>
+                    );
+                })}
             </div>
 
             {/* Pattern-wide Photos Upload */}
@@ -343,14 +356,20 @@ const Tracking = () => {
                     <button onClick={() => handleDeleteNote(index)}>Delete Note</button>
                 </div>
             ))}
-            <button onClick={handleAddNote}>Add Note</button>
+            <button onClick={handleAddNote}>Type Note</button>
 
             {/* Start/Stop Listening Button */}
             <div>
-                {isListening ? (
-                    <button onClick={stopListening}>Stop Recording</button>
+                {isSupported ? (
+                    <>
+                        {isListening ? (
+                            <button onClick={stopListening}>Stop Recording</button>
+                        ) : (
+                            <button onClick={startListening}>Record Note</button>
+                        )}
+                    </>
                 ) : (
-                    <button onClick={startListening}>Start Recording</button>
+                    <p>Speech Recognition is not supported in your browser or on this device.</p>
                 )}
             </div>
             </div>

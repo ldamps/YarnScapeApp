@@ -8,7 +8,7 @@ import axios from 'axios';
 interface Section {
     title: string;
     instructions: string;
-    photoUrl?: string; // Optional photo URL
+    photoUrls: string[]; // Array of photo URLs
 };
 
 interface Pattern {
@@ -30,7 +30,7 @@ const Edit = () => {
     const user = auth.currentUser;
 
     const [title, setTitle] = useState<string>('');
-    const [sections, setSections] = useState<Section[]>([{ title: '', instructions: '', photoUrl: '' }]);
+    const [sections, setSections] = useState<Section[]>([{ title: '', instructions: '', photoUrls: [] }]);
     const [tags, setTags] = useState<string[]>([]);
     const [materials, setMaterials] = useState<string[]>([]);
     const [patternType, setPatternType] = useState<'crochet' | 'knitting'>('crochet'); // default is crochet
@@ -81,7 +81,7 @@ const Edit = () => {
     };
 
     const addSection = () => {
-        setSections([...sections, { title: '', instructions: '', photoUrl: '' }]);
+        setSections([...sections, { title: '', instructions: '', photoUrls: [] }]);
     };
 
     const removeSection = (index: number) => {
@@ -92,27 +92,31 @@ const Edit = () => {
     const handlePatternTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPatternType(e.target.value as 'crochet' | 'knitting');
     };
-    
+
     const handleSkillLevelChange = (level: 'beginner' | 'intermediate' | 'advanced') => {
         setSkillLevel(level);
     };
 
     // Handle image upload or capture
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, sectionIndex: number) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
+        const files = e.target.files;
+        if (!files) return;
 
         const formData = new FormData();
-        formData.append('file', file);
-        formData.append('upload_preset', 'yarnscape-images'); // Replace with your Cloudinary preset
+        formData.append('upload_preset', 'yarnscape-images');
 
         try {
-            const response = await axios.post('https://api.cloudinary.com/v1_1/dm2icxasv/image/upload', formData);
-            const imageUrl = response.data.secure_url;
+            // Upload each selected file to Cloudinary
+            const uploadedUrls: string[] = [];
+            for (const file of files) {
+                formData.append('file', file);
+                const response = await axios.post('https://api.cloudinary.com/v1_1/dm2icxasv/image/upload', formData);
+                uploadedUrls.push(response.data.secure_url);
+            }
 
-            // Update the section's photoUrl
+            // Update the section's photoUrls array with the uploaded image URLs
             const updatedSections = [...sections];
-            updatedSections[sectionIndex].photoUrl = imageUrl;
+            updatedSections[sectionIndex].photoUrls = [...updatedSections[sectionIndex].photoUrls, ...uploadedUrls];
             setSections(updatedSections);
         } catch (error) {
             console.error('Error uploading image:', error);
@@ -121,9 +125,9 @@ const Edit = () => {
     };
 
     // Handle photo removal
-    const handleRemovePhoto = (sectionIndex: number) => {
+    const handleRemovePhoto = (sectionIndex: number, photoIndex: number) => {
         const updatedSections = [...sections];
-        updatedSections[sectionIndex].photoUrl = ''; // Clear the photo URL
+        updatedSections[sectionIndex].photoUrls = updatedSections[sectionIndex].photoUrls.filter((_, i) => i !== photoIndex); // Remove the specific photo URL
         setSections(updatedSections);
     };
 
@@ -163,9 +167,9 @@ const Edit = () => {
             alert('Pattern ID is missing');
             return;
         }
-    
+
         const userConfirmed = window.confirm('Are you sure you want to delete this pattern?');
-    
+
         if (userConfirmed) {
             try {
                 // Create a reference to the pattern document using the patternId
@@ -215,7 +219,6 @@ const Edit = () => {
         <div className="edit-container">
             <form onSubmit={handleSubmit}>
                 <div className="edit-headerSection">
-                    
                     <div className="edit-patternTitle">
                         <input
                             placeholder="Pattern title..."
@@ -283,7 +286,7 @@ const Edit = () => {
                 </div>
 
                 <div className="edit-body-sections">
-                    <label className="edit-sectionLabel">Sections</label>
+                    <label className="edit-sectionLabel">Sections: </label>
                     {sections.map((section, index) => (
                         <div key={index}>
                             <div>
@@ -308,19 +311,24 @@ const Edit = () => {
                                 <input
                                     type="file"
                                     accept="image/*"
-                                    capture="user"
+                                    multiple
                                     onChange={(e) => handleImageUpload(e, index)}
                                 />
-                                {/* Display the uploaded image */}
-                                {section.photoUrl && (
+                                {/* Display the uploaded images */}
+                                {section.photoUrls.length > 0 && (
                                     <div>
-                                        <img src={section.photoUrl} alt="Section" style={{ width: 100, height: 100 }} />
-                                        <button className='editDeletePhotoBtn'
-                                            type="button"
-                                            onClick={() => handleRemovePhoto(index)}
-                                        >
-                                            Remove Photo
-                                        </button>
+                                        {section.photoUrls.map((photoUrl, photoIndex) => (
+                                            <div key={photoIndex}>
+                                                <img src={photoUrl} alt={`Section ${index} Photo ${photoIndex}`} style={{ width: 100, height: 100 }} />
+                                                <button
+                                                    className="editDeletePhotoBtn"
+                                                    type="button"
+                                                    onClick={() => handleRemovePhoto(index, photoIndex)}
+                                                >
+                                                    Remove Photo
+                                                </button>
+                                            </div>
+                                        ))}
                                     </div>
                                 )}
                             </div>

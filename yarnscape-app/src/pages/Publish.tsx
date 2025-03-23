@@ -3,8 +3,13 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../main';
 import { getAuth } from 'firebase/auth';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getFirestore, doc, getDoc, addDoc, collection, updateDoc } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, addDoc, collection, updateDoc, where, query, getDocs, setDoc } from 'firebase/firestore';
 import axios from 'axios';
+
+interface Badge {
+    badgeName: string;
+    timestamp: Date;
+}
 
 const Publish = () => {
     const auth = getAuth();
@@ -70,7 +75,7 @@ const Publish = () => {
 
     const handlePublish = async () => {
         if (!agreed) {
-            alert('You must agree that the pattern is not copyrighted!');
+            alert('You must confirm that the pattern is not copyrighted!');
             return;
         }
 
@@ -95,11 +100,59 @@ const Publish = () => {
                 datePublished: new Date(),
             });
 
+            // Check if this is the user's first published pattern
+            const userPublishedPatternsQuery = query(
+                collection(db, 'published-patterns'),
+                where('userId', '==', user?.uid) // Assuming you store the userId in the published pattern document
+            );
+            const userPublishedPatternsSnapshot = await getDocs(userPublishedPatternsQuery);
+            const publishedPatternsCount = userPublishedPatternsSnapshot.size;
+
+            // If it's the user's first published pattern, give them a badge
+            if (publishedPatternsCount === 1) {
+                await addBadgeToUser(user?.uid, 'Publishing Star');
+                alert('Congratulations! You\'ve earned the "Publishing Star" badge!');
+            }
+
             alert('Pattern published successfully!');
             navigate('/design'); // Redirect to the page where users can see published patterns
         } catch (error) {
             console.error('Error publishing pattern:', error);
             alert('There was an error while publishing your pattern.');
+        }
+    };
+
+    const addBadgeToUser = async (userId: string | undefined, badgeName: string) => {
+        if (!userId) return;
+    
+        const userBadgesRef = doc(db, 'user-badges', userId);
+        const userBadgesDoc = await getDoc(userBadgesRef);
+    
+        try {
+            if (userBadgesDoc.exists()) {
+                const userBadgesData = userBadgesDoc.data();
+                const badges: Badge[] = userBadgesData?.badges || [];  // Explicitly type the badges array
+    
+                // Check if the badge has already been awarded
+                if (!badges.some((badge: Badge) => badge.badgeName === badgeName)) {
+                    badges.push({ badgeName, timestamp: new Date() });
+    
+                    // Update the user's badges in Firestore
+                    await updateDoc(userBadgesRef, { badges });
+    
+                    // Show an alert that the user has earned a badge
+                    alert(`Congratulations! You've earned the "${badgeName}" badge!`);
+                }
+            } else {
+                // If user badges document doesn't exist, create one with the first badge
+                await setDoc(userBadgesRef, {
+                    userId,
+                    badges: [{ badgeName, timestamp: new Date() }],
+                });
+    
+            }
+        } catch (error) {
+            console.error('Error adding badge:', error);
         }
     };
 

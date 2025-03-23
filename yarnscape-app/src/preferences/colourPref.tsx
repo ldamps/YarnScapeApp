@@ -3,10 +3,9 @@
 import { useState, useEffect } from 'react';
 
 const ColorPref = () => {
-  // Default theme is light
-    const [theme, setTheme] = useState<'light' | 'dark'>('light');
+    const [theme, setTheme] = useState<'light' | 'dark'>('light'); // Default theme is light
 
-    // On component mount, load the theme preference from localStorage
+    // Load the theme preference from localStorage
     useEffect(() => {
         const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
         if (savedTheme) {
@@ -14,7 +13,7 @@ const ColorPref = () => {
         }
     }, []);
 
-    // Change theme and save the preference to localStorage
+    // Change the theme and save the preference to localStorage
     const toggleTheme = () => {
         const newTheme = theme === 'light' ? 'dark' : 'light';
         setTheme(newTheme);
