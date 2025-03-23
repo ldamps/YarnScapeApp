@@ -1,11 +1,11 @@
 // This file handles the service worker registration logic
 
 // This is the code that checks if the browser supports service workers and registers the service worker.
-const isLocalhost = Boolean(
+/*const isLocalhost = Boolean(
     window.location.hostname === 'localhost' ||
     window.location.hostname === '[::1]' ||
     window.location.hostname === '127.0.0.1'
-);
+);*/
 
 export function register() {
     if (process.env.NODE_ENV === 'production') {
