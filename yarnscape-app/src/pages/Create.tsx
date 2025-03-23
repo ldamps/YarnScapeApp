@@ -6,12 +6,14 @@ import './styles.css';
 import { getFirestore, collection, addDoc, query, where, getDocs, doc, getDoc, updateDoc, setDoc } from 'firebase/firestore';
 import axios from 'axios';
 
+// interface to represent pattern sections
 interface Section {
     title: string;
     instructions: string;
     photoUrls: string[]; // Now an array of photo URLs
 };
 
+// interface to represent the pattern being created
 interface Pattern {
     id: string;
     title: string;
@@ -23,6 +25,7 @@ interface Pattern {
     skillLevel: 'beginner' | 'intermediate' | 'advanced';
 };
 
+// interface to represent badges
 interface Badge {
     badgeName: string;
     timestamp: Date;
@@ -46,29 +49,35 @@ const Create = () => {
         setTitle(e.target.value);
     };
 
+    // change tag
     const handleTagChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setTags(e.target.value.split(',').map(tag => tag.trim()));
     };
 
+    // change materials
     const handleMaterialsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setMaterials(e.target.value.split(',').map(material => material.trim()));
     };
 
+    // change/edit sections
     const handleSectionChange = (index: number, key: keyof Section, value: string) => {
         const updatedSections = [...sections];
         updatedSections[index] = { ...updatedSections[index], [key]: value };
         setSections(updatedSections);
     };
 
+    // add a section
     const addSection = () => {
         setSections([...sections, { title: '', instructions: '', photoUrls: [] }]);
     };
 
+    // remove a section
     const removeSection = (index: number) => {
         const updatedSections = sections.filter((_, i) => i !== index);
         setSections(updatedSections);
     };
 
+    // change pattern type
     const handlePatternTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPatternType(e.target.value as 'crochet' | 'knitting');
     };
@@ -89,7 +98,7 @@ const Create = () => {
         for (const file of files) {
             const formData = new FormData();
             formData.append('file', file);
-            formData.append('upload_preset', 'yarnscape-images'); // Replace with your Cloudinary preset
+            formData.append('upload_preset', 'yarnscape-images');
 
             try {
                 const response = await axios.post('https://api.cloudinary.com/v1_1/dm2icxasv/image/upload', formData);
@@ -120,7 +129,7 @@ const Create = () => {
             return;
         }
 
-        try {
+        try { // save the pattern to the firestore collection my-patterns
             await addDoc(collection(db, 'my-patterns'), {
                 userId: user?.uid,
                 title,
@@ -185,6 +194,7 @@ const Create = () => {
         }
     };
 
+    // cancel pattern create - clear fields and go back to the design page
     const handleCancel = () => {
         setTitle('');
         setSections([{ title: '', instructions: '', photoUrls: [] }]);
@@ -193,6 +203,7 @@ const Create = () => {
         navigate('/design');
     };
 
+    // to publish a pattern
     const handlePublish = async () => {
         try {
             if (!title.trim()) {
@@ -205,6 +216,8 @@ const Create = () => {
                     return;
                 }
             }
+
+            // save changes made to the pattern before going to the publishing page
             const docRef = await addDoc(collection(db, 'my-patterns'), {
                 userId: user?.uid,
                 title,
@@ -222,8 +235,7 @@ const Create = () => {
             setMaterials([]);
             setPatternType('crochet');
             setSkillLevel('beginner');
-
-            navigate(`/publish/${docRef.id}`);
+            navigate(`/publish/${docRef.id}`); // go to the publish page with this pattern
         } catch (error) {
             console.error('Error saving pattern:', error);
             alert('There was an error while saving the pattern.');

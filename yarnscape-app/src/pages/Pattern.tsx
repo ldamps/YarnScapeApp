@@ -1,7 +1,6 @@
 // Pattern in more detail
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import BottomNav from '../components/bottomNav';
 import './styles.css';
 import { getAuth } from 'firebase/auth';
 import { db } from '../main';

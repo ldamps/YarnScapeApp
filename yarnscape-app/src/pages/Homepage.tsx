@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faUser} from '@fortawesome/free-solid-svg-icons';
 
 const Homepage = () => {
-
+    // navigation functions used in homepage
     const navigate = useNavigate();
     const navigateToProfile = () => {
         navigate('/userprofile');

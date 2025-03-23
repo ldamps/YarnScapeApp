@@ -44,7 +44,6 @@ const Design = () => {
                 // After fetching the user's patterns, check for completed tracking projects
                 fetchCompletedPatterns();
             };
-
             fetchMyPatterns();
         }
     }, [db, user]);
@@ -76,7 +75,7 @@ const Design = () => {
         }
     
         try {
-            // Step 1: Check if the user is already tracking the pattern
+            // Check if the user is already tracking the pattern
             const q = query(collection(db, 'tracking-projects'), where('userId', '==', user.uid), where('patternId', '==', patternId));
             const querySnapshot = await getDocs(q);
     
@@ -92,9 +91,9 @@ const Design = () => {
     
                 // If the pattern is being tracked but not completed, redirect to the tracking page
                 const trackingProjectId = existingTrackingProject.id;
-                navigate(`/tracking/${trackingProjectId}`);
+                navigate(`/tracking/${trackingProjectId}`); // go track this pattern
             } else {
-                // Step 2: If not tracking, add a new tracking project for this pattern
+                // If not tracking, add a new tracking project for this pattern
                 const patternRef = doc(db, 'my-patterns', patternId);
                 const patternDoc = await getDoc(patternRef);
                 if (!patternDoc.exists()) {
@@ -104,7 +103,7 @@ const Design = () => {
     
                 const patternData = patternDoc.data();
     
-                // Step 3: Add the pattern to the tracking-projects collection
+                // Add the pattern to the tracking-projects collection
                 const newTrackingProject = {
                     userId: user.uid,
                     patternId: patternId,
@@ -123,7 +122,7 @@ const Design = () => {
                 };
     
                 const trackingProjectRef = await addDoc(collection(db, 'tracking-projects'), newTrackingProject);
-                console.log('Tracking Project ID:', trackingProjectRef.id); // Add this line for debugging
+                console.log('Tracking Project ID:', trackingProjectRef.id);
                 navigate(`/tracking/${trackingProjectRef.id}`);
             }
         } catch (error) {

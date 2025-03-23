@@ -9,12 +9,14 @@ import { getDocs, query, where, collection, doc, updateDoc, addDoc, getDoc, dele
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCog } from '@fortawesome/free-solid-svg-icons';
 
+// interface to represent the pattern
 interface Pattern {
     id: string;
     title: string;
     published: boolean;
 }
 
+// interface to represent the project being tracked
 interface TrackingProject {
     id: string;
     title: string;
@@ -22,6 +24,7 @@ interface TrackingProject {
     lastEdited: string;
 }
 
+// interface to represent the badges that the user has earned
 interface Badge {
     badgeName: string;
     timestamp: Date;
@@ -40,6 +43,7 @@ const Userprofile = () => {
 
     const navigate = useNavigate();
     const navigateToSettings = () => {
+        // navigate to the settings page
         navigate('/settings');
     };
 
@@ -77,8 +81,7 @@ const Userprofile = () => {
                     console.log('No badges found.');
                 }
             } catch (error) {
-                console.log('Error fetching badges.');
-                console.error('Error fetching badges:', error);
+                console.log('Error fetching badges:', error);
             } finally {
                 setLoading(false);
             }
@@ -91,7 +94,7 @@ const Userprofile = () => {
     useEffect(() => {
         if (user) {
             const fetchMyPatterns = async () => {
-            const q = query(collection(db, 'my-patterns'), where('userId', '==', user.uid));
+            const q = query(collection(db, 'my-patterns'), where('userId', '==', user.uid)); // my patterns where the userID field == the id of the currently signed in user
 
             const querySnapshot = await getDocs(q);
             const myPatternList: Pattern[] = [];
@@ -116,7 +119,7 @@ const Userprofile = () => {
     useEffect(() => {
         if (user) {
             const fetchTrackingProjects = async () => {
-                const q = query(collection(db, 'tracking-projects'), where('userId', '==', user.uid));
+                const q = query(collection(db, 'tracking-projects'), where('userId', '==', user.uid)); // get the user's tracked projects using the current signed in user's id
                 const querySnapshot = await getDocs(q);
                 const trackingProjectList: TrackingProject[] = [];
                 querySnapshot.forEach((doc) => {
@@ -189,9 +192,11 @@ const Userprofile = () => {
     };
 
     const handleEdit = (patternId: string) => {
+        // navigate to the edit page with the selected pattern id
         navigate(`/edit/${patternId}`);
     };
 
+    // go track a project
     const handleTrack = async (patternId: string) => {
             if (!user) {
                 alert('Please log in to track patterns.');
@@ -246,8 +251,8 @@ const Userprofile = () => {
                     };
         
                     const trackingProjectRef = await addDoc(collection(db, 'tracking-projects'), newTrackingProject);
-                    console.log('Tracking Project ID:', trackingProjectRef.id); // Add this line for debugging
-                    navigate(`/tracking/${trackingProjectRef.id}`);
+                    console.log('Tracking Project ID:', trackingProjectRef.id);
+                    navigate(`/tracking/${trackingProjectRef.id}`); // go to the tracking page with the select project's id
                 }
             } catch (error) {
                 console.error('Error handling track:', error);
@@ -278,13 +283,14 @@ const Userprofile = () => {
     };
 
     const handleContinueTracking = (projectId: string) => {
-        navigate(`/tracking/${projectId}`); // Redirect to the track page
+        navigate(`/tracking/${projectId}`); // Redirect to the track page with the selected project
     };
 
     const handleViewProject = (projectId: string) => {
         navigate(`/tracking/${projectId}`); // Redirect to the track page to view the project
     };
 
+    // to delete one of the user's patterns
     const handleDelete = async (patternId: string) => {
         if (!user) {
             alert('Please log in to delete patterns.');
@@ -322,7 +328,6 @@ const Userprofile = () => {
             // Remove the pattern from the state
             const updatedSavedPatterns = savedPatterns.filter((pattern) => pattern.id !== patternId);
             setSavedPatterns(updatedSavedPatterns);
-            alert('Pattern removed from saved patterns.');
         } catch (error) {
             console.error('Error unsaving pattern:', error);
             alert('There was an error unsaving the pattern.');
@@ -394,11 +399,11 @@ const Userprofile = () => {
         }
     };
 
+    // to view a pattern
     const handleViewPattern = (patternId: string) => {
         // Navigate to the pattern detail page. Modify the URL as per your route structure.
         navigate(`/pattern/${patternId}`);
     };
-
 
     return (
         <div className="profile-container">

@@ -15,16 +15,17 @@ interface TrackingProject {
     patternid: string;
 }
 
+// Interface to represent reviews
 interface Review {
     content: string;
     timestamp: string;
 }
 
+// Interface to represent badges
 interface Badge {
     badgeName: string;
     timestamp: Date;
 }
-
 
 const Track = () => {
     const auth = getAuth();
@@ -38,7 +39,7 @@ const Track = () => {
     const [reviewContent, setReviewContent] = useState('');
     const [selectedPatternId, setSelectedPatternId] = useState<string | null>(null); // Store the selected patternId
 
-    // To fetch the user's tracked projects
+    // To fetch the user's tracked projects using the signed in user's id
     useEffect(() => {
         if (user) {
             const fetchTrackingProjects = async () => {
@@ -58,7 +59,6 @@ const Track = () => {
                 setTrackingProjects(trackingProjectList);
                 setLoading(false);
             };
-
             fetchTrackingProjects();
         }
     }, [db, user]);
@@ -76,7 +76,7 @@ const Track = () => {
         };
 
         try {
-            // Update the project as completed
+            // Update the project as completed, completed=true
             const trackingProjectRef = doc(db, 'tracking-projects', projectId);
             await updateDoc(trackingProjectRef, {
                 completed: true,
