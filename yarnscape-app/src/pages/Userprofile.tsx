@@ -167,10 +167,20 @@ const Userprofile = () => {
 
     // Handle Publish/Unpublish and Edit button actions
     const handlePublishUnpublish = async (patternId: string, isPublished: boolean) => {
+        const q = query(collection(db, 'published-patterns'), where('patternID', '==', patternId));
+        const querySnapshot = await getDocs(q);
+        
+        // Check if the document exists and delete it
+        querySnapshot.forEach(async (docSnapshot) => {
+            await deleteDoc(docSnapshot.ref);
+            console.log(`Pattern with ID ${patternId} deleted from 'published-patterns'`);
+        });
+
         const patternRef = doc(db, 'my-patterns', patternId);
         await updateDoc(patternRef, {
             published: !isPublished, // Toggle published status
         });
+
         // Re-fetch patterns after update
         const updatedPatterns = myPatterns.map((pattern) =>
             pattern.id === patternId ? { ...pattern, published: !isPublished } : pattern

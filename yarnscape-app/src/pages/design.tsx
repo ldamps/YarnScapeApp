@@ -136,8 +136,14 @@ const Design = () => {
     const handleUnpublish = async (patternId: string) => {
         try {
             // delete the pattern form 'published-patterns'
-            const publishedPatternRef = doc(db, 'published-patterns', patternId);
-            await deleteDoc(publishedPatternRef);
+            const q = query(collection(db, 'published-patterns'), where('patternID', '==', patternId));
+            const querySnapshot = await getDocs(q);
+            
+            // Check if the document exists and delete it
+            querySnapshot.forEach(async (docSnapshot) => {
+                await deleteDoc(docSnapshot.ref);
+                console.log(`Pattern with ID ${patternId} deleted from 'published-patterns'`);
+            });
             
             // update the pattern in 'my-patterns' so that published=false
             const myPatternRef = doc(db, 'my-patterns', patternId);
