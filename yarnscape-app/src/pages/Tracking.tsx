@@ -59,8 +59,8 @@ const Tracking = () => {
         // Check if SpeechRecognition is available
         const isMobile = /iPhone|iPad|iPod/i.test(navigator.userAgent); // Detect mobile devices (especially iPhone)
 
-        if ('webkitSpeechRecognition' in window && !isMobile) {
-            const SpeechRecognition = (window as any).webkitSpeechRecognition;
+        if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+            const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
             const recognitionInstance = new SpeechRecognition();
             recognitionInstance.interimResults = true;
             recognitionInstance.lang = 'en-US';
@@ -73,10 +73,15 @@ const Tracking = () => {
                 }
             };
 
+            recognitionInstance.onerror = (error: any) => {
+                console.error('Speech recognition error', error);
+                setIsSupported(false);
+            };
+
             setRecognition(recognitionInstance);
         } else {
             setIsSupported(false); // Speech Recognition is not supported
-            alert("Speech recognition is not supported on your device/browser.");
+            console.error('Speech recognition is not supported on your device/browser.');
         }
     }, []);
 
@@ -93,7 +98,6 @@ const Tracking = () => {
             recognition.stop(); // Stop listening
         }
     };
-
 
     // Fetch project data on mount
     useEffect(() => {

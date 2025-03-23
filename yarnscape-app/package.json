@@ -17,6 +17,8 @@
     "@cloudinary/url-gen": "^1.21.0",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "@speechly/browser-client": "^2.6.6",
+    "annyang": "^2.6.1",
     "axios": "^1.8.3",
     "cloudinary": "^2.6.0",
     "firebase": "^11.4.0",

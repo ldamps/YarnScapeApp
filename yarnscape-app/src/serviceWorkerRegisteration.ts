@@ -21,7 +21,7 @@ export function register() {
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker
             //.register('/service-worker.js')  // Path to your service worker
-            .register(`${process.env.PUBLIC_URL}/service-worker.js`)
+            .register('/service-worker.js')
             .then((registration) => {
                 console.log('Service Worker registered: ', registration);
             })
