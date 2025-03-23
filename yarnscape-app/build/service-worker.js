@@ -4,6 +4,7 @@ var CACHE_NAME = 'yarnscape-pwa-cache';
 var urlsToCache = [
     './index.html',
     './manifest.json',
+    './404.html',
     './icons/icon-192x192.png',
     './icons/icon-512x512.png'
 ];
